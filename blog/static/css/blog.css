@@ -1,0 +1,142 @@
+:root {
+    --ink: #1e1c1a;
+    --sand: #f5efe6;
+    --latte: #e8dbc9;
+    --terracotta: #c4582f;
+    --ocean: #2a7f72;
+    --shadow: rgba(30, 28, 26, 0.12);
+}
+
+.blog-index {
+    max-width: 1100px;
+    margin: 0 auto 80px;
+    padding: 24px 20px 0;
+}
+
+.blog-index h1 {
+    font-family: "Playfair Display", "Georgia", serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    margin-bottom: 16px;
+}
+
+.blog-index .intro {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 1.05rem;
+    color: rgba(30, 28, 26, 0.75);
+    max-width: 640px;
+    margin-bottom: 32px;
+}
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+}
+
+.blog-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 18px 40px var(--shadow);
+    border: 1px solid rgba(30, 28, 26, 0.08);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 46px rgba(30, 28, 26, 0.18);
+}
+
+.blog-card h2 {
+    margin: 0 0 10px;
+    font-family: "Playfair Display", "Georgia", serif;
+    font-size: 1.35rem;
+}
+
+.blog-card h2 a {
+    text-decoration: none;
+    color: var(--ink);
+}
+
+.blog-card .meta {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 0.85rem;
+    color: rgba(30, 28, 26, 0.55);
+    margin-bottom: 10px;
+}
+
+.blog-card .excerpt {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    color: rgba(30, 28, 26, 0.75);
+    line-height: 1.5;
+}
+
+.blog-post {
+    max-width: 760px;
+    margin: 0 auto 80px;
+    padding: 24px 20px 0;
+}
+
+.blog-post h1 {
+    font-family: "Playfair Display", "Georgia", serif;
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    margin-bottom: 8px;
+}
+
+.blog-post .meta {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 0.9rem;
+    color: rgba(30, 28, 26, 0.6);
+    margin-bottom: 24px;
+}
+
+.blog-post .intro {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 1.1rem;
+    color: rgba(30, 28, 26, 0.8);
+    margin-bottom: 24px;
+}
+
+.blog-post .stream-block {
+    margin-bottom: 18px;
+}
+
+.blog-post .stream-block h2 {
+    margin: 24px 0 12px;
+    font-family: "Playfair Display", "Georgia", serif;
+}
+
+.blog-post .stream-block p {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    line-height: 1.7;
+    color: rgba(30, 28, 26, 0.78);
+}
+
+.blog-post img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px var(--shadow);
+    margin: 12px 0 24px;
+}
+
+.blog-post .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    color: var(--ocean);
+    text-decoration: none;
+    margin-top: 32px;
+}
+
+.blog-post .back-link:hover {
+    color: var(--terracotta);
+}
+
+@media (max-width: 720px) {
+    .blog-index,
+    .blog-post {
+        padding-top: 12px;
+    }
+}

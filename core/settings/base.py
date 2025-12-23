@@ -75,6 +75,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.settings_context",
             ],
         },
     },
@@ -161,7 +162,7 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "core"
+WAGTAIL_SITE_NAME = "Krung Thep Life"
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html

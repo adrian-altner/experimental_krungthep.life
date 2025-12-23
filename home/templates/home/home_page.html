@@ -1,21 +1,30 @@
 {% extends "base.html" %}
 {% load static %}
-
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_css %}
-
-{% comment %}
-Delete the line below if you're just getting started and want to remove the welcome screen!
-{% endcomment %}
-<link rel="stylesheet" href="{% static 'css/welcome_page.css' %}">
+<link rel="stylesheet" href="{% static 'css/home_page.css' %}">
 {% endblock extra_css %}
 
 {% block content %}
+    <section class="home-hero">
+        <h1>Willkommen</h1>
+        <p>Welcome to Krungthep Life. This is the starting point for stories, guides, and updates.</p>
+    </section>
 
-{% comment %}
-Delete the line below if you're just getting started and want to remove the welcome screen!
-{% endcomment %}
-{% include 'home/welcome_page.html' %}
+    <section class="home-sections">
+        <div>
+            <h2>Latest posts</h2>
+            <p>Read the newest blog entries and site updates.</p>
+        </div>
+        <div>
+            <h2>City guides</h2>
+            <p>Curated places, neighborhoods, and recommendations.</p>
+        </div>
+        <div>
+            <h2>Contact</h2>
+            <p>Have a tip or question? Reach out and say hello.</p>
+        </div>
+    </section>
 
 {% endblock content %}

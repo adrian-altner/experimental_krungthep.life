@@ -7,12 +7,14 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 
 
-class BlogIndexPage(Page):
+class BlogPage(Page):
     intro = RichTextField(blank=True)
 
     content_panels = Page.content_panels + ["intro"]
+    template = "blog/blog_page.html"
 
-class BlogPage(Page):
+
+class BlogPost(Page):
     date = models.DateField("Post date")
     intro = models.CharField(max_length=250)
     body = StreamField(
@@ -26,3 +28,4 @@ class BlogPage(Page):
     )
 
     content_panels = Page.content_panels + ["date", "intro", "body"]
+    template = "blog/blog_post.html"
