@@ -1,3 +1,5 @@
+from typing import Any, cast
+
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.template.response import TemplateResponse
 
@@ -17,7 +19,7 @@ def search(request):
 
     # Search
     if search_query:
-        search_results = Page.objects.live().search(search_query)
+        search_results = cast(Any, Page.objects).live().search(search_query)
 
         # To log this query for use with the "Promoted search results" module:
 

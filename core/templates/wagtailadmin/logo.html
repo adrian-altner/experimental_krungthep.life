@@ -1,0 +1,7 @@
+{% spaceless %}
+    {% if wordmark %}
+        <span class="logo-text">{{ settings.WAGTAIL_SITE_NAME|default:"Site" }}</span>
+    {% else %}
+        <span class="logo-text">{{ settings.WAGTAIL_SITE_NAME|default:"Site" }}</span>
+    {% endif %}
+{% endspaceless %}

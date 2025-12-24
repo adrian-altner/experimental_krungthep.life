@@ -1,20 +1,26 @@
+from typing import cast
+
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
 
 class CustomUserManager(UserManager):
-    def _create_user(self, email, password, **extra_fields):
+    def _create_user(self, username, email, password, **extra_fields):
         if not email:
             raise ValueError("The Email must be set")
         email = self.normalize_email(email)
-        username = extra_fields.get("username") or email
-        extra_fields.pop("username", None)
-        return super()._create_user(username, email, password, **extra_fields)
+        username = username or email
+        return cast(UserManager, super())._create_user(  # type: ignore[attr-defined]
+            username,
+            email,
+            password,
+            **extra_fields,
+        )
 
-    def create_user(self, email, password=None, **extra_fields):
-        return self._create_user(email, password, **extra_fields)
+    def create_user(self, username=None, email=None, password=None, **extra_fields):
+        return self._create_user(username, email, password, **extra_fields)
 
-    def create_superuser(self, email, password, **extra_fields):
+    def create_superuser(self, username=None, email=None, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
@@ -22,7 +28,7 @@ class CustomUserManager(UserManager):
             raise ValueError("Superuser must have is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
             raise ValueError("Superuser must have is_superuser=True.")
-        return self._create_user(email, password, **extra_fields)
+        return self._create_user(username, email, password, **extra_fields)
 
 
 class User(AbstractUser):
