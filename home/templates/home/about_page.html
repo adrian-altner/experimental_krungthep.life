@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load static wagtailcore_tags %}
+
+{% block body_class %}template-aboutpage{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about_page.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <section class="about-page">
+        <h1>{{ page.title }}</h1>
+        {% if page.intro %}
+            <div class="intro">{{ page.intro|richtext }}</div>
+        {% endif %}
+        {% if page.body %}
+            <div class="body">{{ page.body|richtext }}</div>
+        {% endif %}
+    </section>
+{% endblock content %}

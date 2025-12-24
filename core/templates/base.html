@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailuserbar %}
+{% load static wagtailcore_tags wagtailuserbar navigation_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -40,8 +40,14 @@
                 </a>
             </div>
             <nav class="site-nav">
-                <a href="{% if current_site %}{% pageurl current_site.root_page %}{% else %}/{% endif %}">Home</a>
-                <a href="/blog/">Blog</a>
+                {% primary_menu as menu_pages %}
+                {% if menu_pages %}
+                    {% for menu_page in menu_pages %}
+                        <a href="{% pageurl menu_page %}">{{ menu_page.title }}</a>
+                    {% endfor %}
+                {% else %}
+                    <a href="/">Home</a>
+                {% endif %}
                 <a href="/admin/">Admin</a>
             </nav>
         </header>

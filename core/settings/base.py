@@ -164,6 +164,9 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 
 WAGTAIL_SITE_NAME = "Krung Thep Life"
 
+# Pages of these models won't show up in the primary navigation.
+NAV_EXCLUDE_MODELS = ["blog.blogpost"]
+
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
 WAGTAILSEARCH_BACKENDS = {
