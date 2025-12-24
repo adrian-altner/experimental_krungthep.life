@@ -1,0 +1,19 @@
+.public-transport-page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 72px 24px;
+}
+
+.public-transport-page h1 {
+    font-size: 2.5rem;
+    margin-bottom: 24px;
+}
+
+.public-transport-page .intro {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.public-transport-page .body {
+    line-height: 1.7;
+}
