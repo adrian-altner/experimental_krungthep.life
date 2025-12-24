@@ -13,8 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from pathlib import Path
 
-PROJECT_DIR = Path(__file__).resolve().parent.parent
-BASE_DIR = PROJECT_DIR.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+PROJECT_DIR = BASE_DIR / "core"
 
 
 # Quick-start development settings - unsuitable for production
@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "core",
     "blog",
     "home",
+    "accounts",
     "public_transport",
     "search",
     "wagtail.contrib.forms",
@@ -51,6 +52,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 ]
 
+AUTH_USER_MODEL = "accounts.User"
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -62,7 +65,7 @@ MIDDLEWARE = [
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
-ROOT_URLCONF = "core.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -83,7 +86,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "core.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
+ASGI_APPLICATION = "config.asgi.application"
 
 
 # Database
