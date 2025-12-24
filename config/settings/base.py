@@ -173,6 +173,10 @@ WAGTAIL_SITE_NAME = "Krung Thep Life"
 # Pages of these models won't show up in the primary navigation.
 NAV_EXCLUDE_MODELS = ["blog.blogpost"]
 
+# Optional navigation root override for primary menus.
+NAVIGATION_ROOT_PAGE_ID = None
+NAVIGATION_ROOT_SLUG = None
+
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
 WAGTAILSEARCH_BACKENDS = {

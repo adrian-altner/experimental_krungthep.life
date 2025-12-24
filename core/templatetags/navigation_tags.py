@@ -1,4 +1,4 @@
-from typing import cast
+from typing import Any, cast
 
 from django import template
 from django.conf import settings
@@ -15,7 +15,17 @@ def primary_menu(context):
         return Page.objects.none()
 
     site = cast(Site, site)
-    pages = site.root_page.get_children().live().in_menu()
+    root_page = site.root_page
+    nav_page_id = getattr(settings, "NAVIGATION_ROOT_PAGE_ID", None)
+    nav_slug = getattr(settings, "NAVIGATION_ROOT_SLUG", None)
+    if nav_page_id:
+        root_page = Page.objects.filter(id=nav_page_id).first() or root_page
+    elif nav_slug:
+        scoped_root = root_page.get_descendants().filter(slug=nav_slug).first()
+        if scoped_root:
+            root_page = scoped_root
+
+    pages = cast(Any, root_page.get_children()).live().in_menu()
     for item in getattr(settings, "NAV_EXCLUDE_MODELS", []):
         try:
             app_label, model = item.split(".", 1)
