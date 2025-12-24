@@ -1,3 +1,5 @@
+from typing import cast
+
 from django import template
 from django.conf import settings
 from wagtail.models import Page, Site
@@ -12,6 +14,7 @@ def primary_menu(context):
     if not site:
         return Page.objects.none()
 
+    site = cast(Site, site)
     pages = site.root_page.get_children().live().in_menu()
     for item in getattr(settings, "NAV_EXCLUDE_MODELS", []):
         try:
