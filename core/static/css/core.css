@@ -53,7 +53,6 @@ body {
     background: var(--terracotta);
     transform: scaleX(0);
     transform-origin: left;
-    transition: transform 180ms ease;
 }
 
 .site-nav a:hover::after,
