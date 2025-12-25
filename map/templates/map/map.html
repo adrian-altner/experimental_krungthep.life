@@ -1,0 +1,5 @@
+{% load static %}
+<div class="map-block">
+    {{ map_points|json_script:map_data_id }}
+    <div id="{{ map_id }}" class="map-block__canvas" data-empty="{{ empty_message }}"></div>
+</div>

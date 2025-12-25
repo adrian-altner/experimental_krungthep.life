@@ -4,6 +4,8 @@
 {% block body_class %}template-poiindexpage{% endblock %}
 
 {% block extra_css %}
+<link rel="stylesheet" href="{% static 'map/vendor/leaflet/leaflet.css' %}">
+<link rel="stylesheet" href="{% static 'map/css/map.css' %}">
 <link rel="stylesheet" href="{% static 'poi/css/poi.css' %}">
 {% endblock extra_css %}
 
@@ -80,8 +82,7 @@
 
         <section class="poi-map">
             <h2>Map</h2>
-            {{ map_pois|json_script:"poi-map-data" }}
-            <div id="poi-map" class="poi-map__canvas" data-empty="No locations with coordinates."></div>
+            {% include "map/map.html" with map_points=map_pois map_id="poi-map" map_data_id="poi-map-data" empty_message="No locations with coordinates." %}
         </section>
 
         <section class="poi-list">
@@ -121,5 +122,6 @@
 {% endblock content %}
 
 {% block extra_js %}
+<script src="{% static 'map/vendor/leaflet/leaflet.js' %}"></script>
 <script src="{% static 'poi/js/poi_map.js' %}"></script>
 {% endblock extra_js %}

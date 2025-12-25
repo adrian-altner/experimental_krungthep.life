@@ -1,4 +1,4 @@
-{% load static wagtailcore_tags wagtailuserbar navigation_tags %}
+{% load static wagtailcore_tags wagtailuserbar navigation_tags user_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -50,6 +50,18 @@
                 {% endif %}
                 <a href="/admin/">Admin</a>
             </nav>
+            {% if request.user.is_authenticated %}
+                <div class="site-user">
+                    <img src="{% user_avatar_url request.user 40 %}" alt="">
+                    <span>
+                        {% if request.user.get_full_name %}
+                            {{ request.user.get_full_name }}
+                        {% else %}
+                            {{ request.user.email }}
+                        {% endif %}
+                    </span>
+                </div>
+            {% endif %}
         </header>
 
         <main class="site-main">

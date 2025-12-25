@@ -37,6 +37,21 @@ body {
     font-size: 0.95rem;
 }
 
+.site-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 0.9rem;
+}
+
+.site-user img {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    object-fit: cover;
+}
+
 .site-nav a {
     text-decoration: none;
     color: var(--ink);
@@ -83,5 +98,9 @@ body {
     .site-nav {
         flex-wrap: wrap;
         gap: 12px;
+    }
+
+    .site-user {
+        margin-top: 8px;
     }
 }

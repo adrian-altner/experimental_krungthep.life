@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "blog",
     "home",
     "accounts",
+    "map",
     "poi",
     "public_transport",
     "search",

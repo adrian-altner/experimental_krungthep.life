@@ -7,7 +7,7 @@ from wagtail.admin.menu import MenuItem
 from poi.admin_views import poi_index_list
 
 
-@hooks.register("register_admin_menu_item")
+@hooks.register("register_admin_menu_item")  # type: ignore[operator]
 def register_poi_menu_item():
     return MenuItem(
         _("POI"),
@@ -17,7 +17,7 @@ def register_poi_menu_item():
     )
 
 
-@hooks.register("register_admin_urls")
+@hooks.register("register_admin_urls")  # type: ignore[operator]
 def register_poi_admin_urls():
     return [
         path("poi/", poi_index_list, name="poi_index_list"),

@@ -94,56 +94,6 @@
     margin-bottom: 48px;
 }
 
-.poi-map__canvas {
-    position: relative;
-    height: 360px;
-    border-radius: 20px;
-    background: linear-gradient(120deg, #f1ede4, #e9f1f4);
-    border: 1px solid #d6d6d6;
-    overflow: hidden;
-}
-
-.poi-map__empty {
-    padding: 24px;
-}
-
-.poi-map__marker {
-    position: absolute;
-    transform: translate(-50%, -50%);
-}
-
-.poi-map__marker-link {
-    text-decoration: none;
-    color: inherit;
-}
-
-.poi-map__marker-dot {
-    width: 14px;
-    height: 14px;
-    border-radius: 999px;
-    background: #1a1a1a;
-    display: block;
-    box-shadow: 0 0 0 6px rgba(26, 26, 26, 0.18);
-}
-
-.poi-map__marker-label {
-    position: absolute;
-    top: -8px;
-    left: 18px;
-    background: #1a1a1a;
-    color: #fff;
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s ease;
-}
-
-.poi-map__marker:hover .poi-map__marker-label {
-    opacity: 1;
-}
 
 .poi-list__grid {
     display: grid;

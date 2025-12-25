@@ -18,42 +18,28 @@
         return;
     }
 
-    const lats = data.map((item) => item.lat);
-    const lngs = data.map((item) => item.lng);
-    const minLat = Math.min(...lats);
-    const maxLat = Math.max(...lats);
-    const minLng = Math.min(...lngs);
-    const maxLng = Math.max(...lngs);
-    const latRange = maxLat - minLat || 1;
-    const lngRange = maxLng - minLng || 1;
+    if (!window.L) {
+        mapEl.textContent = "Map library unavailable.";
+        return;
+    }
 
-    const fragment = document.createDocumentFragment();
+    const map = window.L.map(mapEl, { scrollWheelZoom: false });
+    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: "&copy; OpenStreetMap contributors",
+    }).addTo(map);
+
+    const bounds = [];
     data.forEach((item) => {
-        const x = ((item.lng - minLng) / lngRange) * 100;
-        const y = ((maxLat - item.lat) / latRange) * 100;
-
-        const marker = document.createElement("div");
-        marker.className = "poi-map__marker";
-        marker.style.left = `${x}%`;
-        marker.style.top = `${y}%`;
-
-        const link = document.createElement("a");
-        link.className = "poi-map__marker-link";
-        link.href = item.url;
-        link.setAttribute("aria-label", `${item.title} (${item.category})`);
-
-        const dot = document.createElement("span");
-        dot.className = "poi-map__marker-dot";
-
-        const label = document.createElement("span");
-        label.className = "poi-map__marker-label";
-        label.textContent = `${item.title} — ${item.category}`;
-
-        link.appendChild(dot);
-        link.appendChild(label);
-        marker.appendChild(link);
-        fragment.appendChild(marker);
+        const marker = window.L.marker([item.lat, item.lng]).addTo(map);
+        marker.bindPopup(
+            `<strong><a href="${item.url}">${item.title}</a></strong><br>${item.category}`
+        );
+        bounds.push([item.lat, item.lng]);
     });
 
-    mapEl.appendChild(fragment);
+    if (bounds.length === 1) {
+        map.setView(bounds[0], 14);
+    } else {
+        map.fitBounds(bounds, { padding: [30, 30] });
+    }
 })();

@@ -34,6 +34,7 @@ and the same category cannot be used by another POIIndexPage.
 
 ## Map Data
 Map points are rendered from inline JSON using `map_pois` in the template.
+Leaflet assets are stored locally under `poi/static/poi/vendor/leaflet/`.
 POIs without coordinates are listed but not shown on the map.
 
 ## Files
