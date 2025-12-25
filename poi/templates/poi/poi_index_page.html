@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}template-poiindexpage{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'poi/css/poi.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <section class="poi-index">
+        <header class="poi-index__header">
+            <h1>{{ page.title }}</h1>
+            {% if page.intro %}
+                <div class="poi-index__intro">{{ page.intro|richtext }}</div>
+            {% endif %}
+        </header>
+
+        <form class="poi-filters" method="get">
+            <div class="poi-filters__row">
+                <label>
+                    Search
+                    <input type="text" name="q" value="{{ search_query }}" placeholder="Search places">
+                </label>
+                <label>
+                    Category
+                    {% if is_category_locked and selected_category_obj %}
+                        <div class="poi-filters__locked">{{ selected_category_obj.title }}</div>
+                    {% else %}
+                        <select name="category">
+                            <option value="">All</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}" {% if category.id|stringformat:"s" == selected_category %}selected{% endif %}>
+                                    {{ category.title }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </label>
+                <label class="poi-filters__checkbox">
+                    <input type="checkbox" name="verified" value="1" {% if verified_only %}checked{% endif %}>
+                    Verified only
+                </label>
+            </div>
+
+            <div class="poi-filters__features">
+                <span>Features</span>
+                <div class="poi-filters__feature-list">
+                    {% for feature in features %}
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="feature"
+                                value="{{ feature.slug }}"
+                                {% if feature.slug in selected_features %}checked{% endif %}
+                            >
+                            {{ feature.title }}
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <button class="poi-filters__submit" type="submit">Apply filters</button>
+        </form>
+
+        {% if selected_category_obj %}
+            <div class="poi-active-category">
+                <span>Category:</span> {{ selected_category_obj.title }}
+            </div>
+        {% endif %}
+
+        {% if not is_category_locked %}
+            <nav class="poi-category-links">
+                <a href="{% pageurl page %}">All</a>
+                {% for category in categories %}
+                    <a href="{% pageurl page %}?category={{ category.id }}">{{ category.title }}</a>
+                {% endfor %}
+            </nav>
+        {% endif %}
+
+        <section class="poi-map">
+            <h2>Map</h2>
+            {{ map_pois|json_script:"poi-map-data" }}
+            <div id="poi-map" class="poi-map__canvas" data-empty="No locations with coordinates."></div>
+        </section>
+
+        <section class="poi-list">
+            <h2>Places</h2>
+            <div class="poi-list__grid">
+                {% for poi in pois %}
+                    <article class="poi-card">
+                        <a href="{% pageurl poi %}">
+                            {% if poi.hero_image %}
+                                {% image poi.hero_image fill-560x360 class="poi-card__image" %}
+                            {% endif %}
+                            <div class="poi-card__content">
+                                <div class="poi-card__category">{{ poi.category.title }}</div>
+                                <h3>{{ poi.title }}</h3>
+                                <p>{{ poi.short_description }}</p>
+                            </div>
+                        </a>
+                    </article>
+                {% empty %}
+                    <p>No places match your filters yet.</p>
+                {% endfor %}
+            </div>
+
+            {% if page_obj.paginator.num_pages > 1 %}
+                <nav class="poi-pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}{% if querystring %}&{{ querystring }}{% endif %}">Previous</a>
+                    {% endif %}
+                    <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}{% if querystring %}&{{ querystring }}{% endif %}">Next</a>
+                    {% endif %}
+                </nav>
+            {% endif %}
+        </section>
+    </section>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'poi/js/poi_map.js' %}"></script>
+{% endblock extra_js %}

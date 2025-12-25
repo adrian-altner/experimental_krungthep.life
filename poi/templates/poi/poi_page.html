@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}template-poipage{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'poi/css/poi.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <article class="poi-detail">
+        <header class="poi-detail__header">
+            {% if page.hero_image %}
+                {% image page.hero_image fill-1400x700 class="poi-detail__hero" %}
+            {% endif %}
+            <div class="poi-detail__title">
+                <span class="poi-detail__category">{{ page.category.title }}</span>
+                <h1>{{ page.title }}</h1>
+                <p class="poi-detail__summary">{{ page.short_description }}</p>
+            </div>
+        </header>
+
+        <section class="poi-detail__meta">
+            {% if page.features.all %}
+                <div class="poi-detail__features">
+                    {% for feature in page.features.all %}
+                        <span class="poi-badge">{{ feature.title }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if page.verified %}
+                <div class="poi-detail__verified">Verified</div>
+            {% endif %}
+        </section>
+
+        {% if page.full_description %}
+            <section class="poi-detail__body">
+                {{ page.full_description|richtext }}
+            </section>
+        {% endif %}
+
+        <section class="poi-detail__info">
+            <div>
+                <h2>Location</h2>
+                {% if page.address %}
+                    <p>{{ page.address }}</p>
+                {% endif %}
+                {% if page.district %}
+                    <p>{{ page.district }}</p>
+                {% endif %}
+                {% if page.city or page.country %}
+                    <p>{{ page.city }}{% if page.city and page.country %}, {% endif %}{{ page.country }}</p>
+                {% endif %}
+                {% if page.landmark %}
+                    <p>Near {{ page.landmark }}</p>
+                {% endif %}
+                {% if page.latitude and page.longitude %}
+                    <p>
+                        <a href="https://www.google.com/maps/search/?api=1&query={{ page.latitude }},{{ page.longitude }}" target="_blank" rel="noreferrer">
+                            Open in maps
+                        </a>
+                    </p>
+                {% endif %}
+            </div>
+            <div>
+                <h2>Contact</h2>
+                {% if page.website %}
+                    <p><a href="{{ page.website }}" target="_blank" rel="noreferrer">Website</a></p>
+                {% endif %}
+                {% if page.phone %}
+                    <p>{{ page.phone }}</p>
+                {% endif %}
+                {% if page.instagram_url %}
+                    <p><a href="{{ page.instagram_url }}" target="_blank" rel="noreferrer">Instagram</a></p>
+                {% endif %}
+                {% if page.facebook_url %}
+                    <p><a href="{{ page.facebook_url }}" target="_blank" rel="noreferrer">Facebook</a></p>
+                {% endif %}
+            </div>
+        </section>
+
+        {% if page.gallery_images.all %}
+            <section class="poi-detail__gallery">
+                <h2>Gallery</h2>
+                <div class="poi-gallery">
+                    {% for item in page.gallery_images.all %}
+                        <figure>
+                            {% image item.image fill-560x420 %}
+                            {% if item.caption %}
+                                <figcaption>{{ item.caption }}</figcaption>
+                            {% endif %}
+                        </figure>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <section class="poi-detail__placeholder">
+            <h2>Coming soon</h2>
+            <p>Reviews, nearby places, and related stories will appear here.</p>
+        </section>
+    </article>
+{% endblock content %}

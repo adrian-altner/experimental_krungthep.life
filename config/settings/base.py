@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     "blog",
     "home",
     "accounts",
+    "poi",
     "public_transport",
     "search",
     "wagtail.contrib.forms",

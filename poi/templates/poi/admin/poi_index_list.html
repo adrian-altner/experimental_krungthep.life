@@ -1,0 +1,45 @@
+{% extends "wagtailadmin/base.html" %}
+{% load i18n %}
+
+{% block content %}
+    <div class="w-content">
+        <header class="w-header">
+            <div class="row">
+                <div class="left">
+                    <h1 class="w-h1">POI categories</h1>
+                </div>
+            </div>
+        </header>
+
+        <div class="w-panel">
+            <div class="w-panel__content">
+                {% if indexes %}
+                    <table class="listing">
+                        <thead>
+                            <tr>
+                                <th>{% trans "Category" %}</th>
+                                <th>{% trans "POI index page" %}</th>
+                                <th>{% trans "Actions" %}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in indexes %}
+                                <tr>
+                                    <td>{{ item.category }}</td>
+                                    <td>{{ item.title }}</td>
+                                    <td>
+                                        <a href="{{ item.explore_url }}">{% trans "Open" %}</a>
+                                        |
+                                        <a href="{{ item.add_poi_url }}">{% trans "Add POI" %}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>{% trans "No POI index pages yet." %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
