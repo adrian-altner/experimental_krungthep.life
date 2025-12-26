@@ -7,12 +7,19 @@
         <title>
             {% block title %}
             {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
-            {% endblock %}
+            {% endblock title %}
             {% if settings.WAGTAIL_SITE_NAME %} - {{ settings.WAGTAIL_SITE_NAME }}{% endif %}
         </title>
         {% if page.search_description %}
         <meta name="description" content="{{ page.search_description }}" />
+        {% else %}
+        <meta name="description" content="{% if settings.WAGTAIL_SITE_NAME %}{{ settings.WAGTAIL_SITE_NAME }}{% else %}Krung Thep Life{% endif %} — city guides, stories, and maps." />
         {% endif %}
+        {% block meta_keywords %}
+        {% if page.tags.exists %}
+        <meta name="keywords" content="{% for tag in page.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}" />
+        {% endif %}
+        {% endblock meta_keywords %}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {# Force all links in the live preview panel to be opened in a new tab #}
@@ -20,15 +27,23 @@
         <base target="_blank">
         {% endif %}
 
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Source+Sans+3:wght@400;500;600&display=swap"
+        >
+
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/core.css' %}">
+        <link rel="stylesheet" type="text/css" href="{% static 'vite/app.css' %}">
 
         {% block extra_css %}
         {# Override this in templates to add extra stylesheets #}
-        {% endblock %}
+        {% endblock extra_css %}
     </head>
 
-    <body class="{% block body_class %}{% endblock %}">
+    <body class="{% block body_class %}{% endblock body_class %}">
         {% wagtailuserbar %}
 
         {% wagtail_site as current_site %}
@@ -46,13 +61,13 @@
                         <a href="{% pageurl menu_page %}">{{ menu_page.title }}</a>
                     {% endfor %}
                 {% else %}
-                    <a href="/">Home</a>
+                    <a href="{% if current_site %}{% pageurl current_site.root_page %}{% else %}/{% endif %}">Home</a>
                 {% endif %}
-                <a href="/admin/">Admin</a>
+                <a href="{% url 'wagtailadmin_home' %}">Admin</a>
             </nav>
             {% if request.user.is_authenticated %}
                 <div class="site-user">
-                    <img src="{% user_avatar_url request.user 40 %}" alt="">
+                    <img src="{% user_avatar_url request.user 40 %}" alt="" width="40" height="40">
                     <span>
                         {% if request.user.get_full_name %}
                             {{ request.user.get_full_name }}
@@ -65,18 +80,49 @@
         </header>
 
         <main class="site-main">
-            {% block content %}{% endblock %}
+            {% block content %}{% endblock content %}
         </main>
 
-        <footer class="site-footer">
-            <p>&copy; {% now "Y" %} {% if current_site and current_site.site_name %}{{ current_site.site_name }}{% else %}Site{% endif %}. All rights reserved.</p>
+        <footer class="mt-16 bg-[#f5efe6] text-[#1e1c1a]">
+            <div class="mx-auto flex max-w-6xl flex-col gap-10 px-6 py-12 md:flex-row md:items-start md:justify-between">
+                <div class="max-w-md">
+                    <p class="text-xs uppercase tracking-[0.3em] text-[#c4582f]">Krung Thep Life</p>
+                    <p class="mt-3 text-lg font-semibold">
+                        {% if current_site and current_site.site_name %}{{ current_site.site_name }}{% else %}Krung Thep Life{% endif %}
+                    </p>
+                    <p class="mt-2 text-sm leading-relaxed text-[#3f3a33]">
+                        City guides, slow travel notes, and neighborhood stories across Bangkok.
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-8 text-sm">
+                    <div class="space-y-2">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-[#c4582f]">Explore</p>
+                        <a class="block hover:text-[#c4582f]" href="{% if current_site %}{% pageurl current_site.root_page %}{% else %}/{% endif %}">Home</a>
+                        <a class="block hover:text-[#c4582f]" href="{% slugurl 'blog' %}">Blog</a>
+                        <a class="block hover:text-[#c4582f]" href="{% slugurl 'map' %}">Map</a>
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-xs font-semibold uppercase tracking-wider text-[#c4582f]">Connect</p>
+                        <a class="block hover:text-[#c4582f]" href="{% url 'wagtailadmin_home' %}">Admin</a>
+                        <a class="block hover:text-[#c4582f]" href="{% url 'search' %}">Search</a>
+                        <a class="block hover:text-[#c4582f]" href="{% slugurl 'about' %}">About</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-[#e8dbc9]">
+                <div class="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-6 text-xs text-[#6b635b] md:flex-row md:items-center md:justify-between">
+                    <p>(c) {% now "Y" %} {% if current_site and current_site.site_name %}{{ current_site.site_name }}{% else %}Krung Thep Life{% endif %}. All rights reserved.</p>
+                    <p>Made in Bangkok · Updated often</p>
+                </div>
+            </div>
         </footer>
 
         {# Global javascript #}
         <script type="text/javascript" src="{% static 'js/core.js' %}"></script>
+        <script type="module" src="{% static 'vite/app.js' %}"></script>
 
         {% block extra_js %}
         {# Override this in templates to add extra javascript #}
-        {% endblock %}
+        {% endblock extra_js %}
     </body>
 </html>

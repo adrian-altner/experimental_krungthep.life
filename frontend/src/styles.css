@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* Vite-managed styles for new UI work. */
+:root {
+    --vite-accent: #2a7f72;
+}
