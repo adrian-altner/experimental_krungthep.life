@@ -26,56 +26,106 @@
         <div class="station-grid">
             {% for card in station_cards %}
                 {% with station=card.station %}
-                {% if card.page_url %}
-                    <a class="station-card" href="{{ card.page_url }}">
-                {% elif station.latitude and station.longitude %}
-                    <a class="station-card" href="/map/transport/?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
-                {% else %}
-                    <div class="station-card">
-                {% endif %}
-                    <div class="station-card__header">
-                        <h2>{{ station.station_label }}</h2>
-                        {% if station.station_codes %}
-                            <span class="station-code">{{ station.station_codes }}</span>
-                        {% endif %}
-                    </div>
-                    <dl class="station-card__meta">
-                        {% if station.opening %}
-                            <div>
-                                <dt>Opened</dt>
-                                <dd>{{ station.opening }}</dd>
+                    {% if card.page_url %}
+                        <a class="station-card" href="{{ card.page_url }}">
+                            <div class="station-card__header">
+                                <h2>{{ station.station_label }}</h2>
+                                {% if station.station_codes %}
+                                    <span class="station-code">{{ station.station_codes }}</span>
+                                {% endif %}
                             </div>
-                        {% endif %}
-                        {% if station.system_label %}
-                            <div>
-                                <dt>System</dt>
-                                <dd>{{ station.system_label }}</dd>
+                            <dl class="station-card__meta">
+                                {% if station.opening %}
+                                    <div>
+                                        <dt>Opened</dt>
+                                        <dd>{{ station.opening }}</dd>
+                                    </div>
+                                {% endif %}
+                                {% if station.system_label %}
+                                    <div>
+                                        <dt>System</dt>
+                                        <dd>{{ station.system_label }}</dd>
+                                    </div>
+                                {% endif %}
+                                {% if station.line_label %}
+                                    <div>
+                                        <dt>Line</dt>
+                                        <dd>{{ station.line_label }}</dd>
+                                    </div>
+                                {% endif %}
+                            </dl>
+                            <div class="station-card__link">
+                                <span class="station-badge station-badge--detail">Detail page</span>
+                                <span>View details</span>
                             </div>
-                        {% endif %}
-                        {% if station.line_label %}
-                            <div>
-                                <dt>Line</dt>
-                                <dd>{{ station.line_label }}</dd>
+                        </a>
+                    {% elif station.latitude and station.longitude %}
+                        <a class="station-card" href="/map/transport/?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
+                            <div class="station-card__header">
+                                <h2>{{ station.station_label }}</h2>
+                                {% if station.station_codes %}
+                                    <span class="station-code">{{ station.station_codes }}</span>
+                                {% endif %}
                             </div>
-                        {% endif %}
-                    </dl>
-                    <div class="station-card__link">
-                        {% if card.page_url %}
-                            <span class="station-badge station-badge--detail">Detail page</span>
-                            <span>View details</span>
-                        {% elif station.latitude and station.longitude %}
-                            <span class="station-badge station-badge--map">Map</span>
-                            <span>View on map</span>
-                        {% else %}
-                            <span class="station-badge station-badge--missing">Missing</span>
-                            <span>No coordinates</span>
-                        {% endif %}
-                    </div>
-                {% if card.page_url or station.latitude and station.longitude %}
-                    </a>
-                {% else %}
-                    </div>
-                {% endif %}
+                            <dl class="station-card__meta">
+                                {% if station.opening %}
+                                    <div>
+                                        <dt>Opened</dt>
+                                        <dd>{{ station.opening }}</dd>
+                                    </div>
+                                {% endif %}
+                                {% if station.system_label %}
+                                    <div>
+                                        <dt>System</dt>
+                                        <dd>{{ station.system_label }}</dd>
+                                    </div>
+                                {% endif %}
+                                {% if station.line_label %}
+                                    <div>
+                                        <dt>Line</dt>
+                                        <dd>{{ station.line_label }}</dd>
+                                    </div>
+                                {% endif %}
+                            </dl>
+                            <div class="station-card__link">
+                                <span class="station-badge station-badge--map">Map</span>
+                                <span>View on map</span>
+                            </div>
+                        </a>
+                    {% else %}
+                        <div class="station-card">
+                            <div class="station-card__header">
+                                <h2>{{ station.station_label }}</h2>
+                                {% if station.station_codes %}
+                                    <span class="station-code">{{ station.station_codes }}</span>
+                                {% endif %}
+                            </div>
+                            <dl class="station-card__meta">
+                                {% if station.opening %}
+                                    <div>
+                                        <dt>Opened</dt>
+                                        <dd>{{ station.opening }}</dd>
+                                    </div>
+                                {% endif %}
+                                {% if station.system_label %}
+                                    <div>
+                                        <dt>System</dt>
+                                        <dd>{{ station.system_label }}</dd>
+                                    </div>
+                                {% endif %}
+                                {% if station.line_label %}
+                                    <div>
+                                        <dt>Line</dt>
+                                        <dd>{{ station.line_label }}</dd>
+                                    </div>
+                                {% endif %}
+                            </dl>
+                            <div class="station-card__link">
+                                <span class="station-badge station-badge--missing">Missing</span>
+                                <span>No coordinates</span>
+                            </div>
+                        </div>
+                    {% endif %}
                 {% endwith %}
             {% empty %}
                 <div class="station-empty">No stations found.</div>

@@ -2,7 +2,7 @@
 
 {% load wagtailcore_tags %}
 
-{% block body_class %}template-publictransportstationpage{% endblock %}
+{% block body_class %}template-publictransportstationpage{% endblock body_class %}
 
 {% block content %}
     <section class="public-transport-station">
@@ -18,7 +18,7 @@
                 {% if station.opening %}<li>Opened: {{ station.opening }}</li>{% endif %}
                 {% if station.latitude and station.longitude %}
                     <li>
-                        <a href="/map/transport/?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
+                        <a href="{% url 'map:transport_map' %}?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
                             View on map
                         </a>
                     </li>

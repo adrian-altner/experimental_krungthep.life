@@ -6,7 +6,7 @@ from public_transport.models import TransportStation
 
 class TransportStationViewSet(SnippetViewSet):
     model = TransportStation
-    list_display = (
+    list_display = (  # type: ignore[reportIncompatibleVariableOverride]
         "station_label",
         "system_label",
         "line_label",
@@ -19,8 +19,14 @@ class TransportStationViewSet(SnippetViewSet):
         "station_qid",
         "line_qid",
     )
-    list_filter = ("system_label", "line_label", "opening", "created_at", "updated_at")
-    search_fields = (
+    list_filter = (  # type: ignore[reportIncompatibleVariableOverride]
+        "system_label",
+        "line_label",
+        "opening",
+        "created_at",
+        "updated_at",
+    )
+    search_fields = (  # type: ignore[reportIncompatibleVariableOverride]
         "station_label",
         "system_label",
         "line_label",
@@ -28,7 +34,7 @@ class TransportStationViewSet(SnippetViewSet):
         "station_qid",
         "line_qid",
     )
-    ordering = ["station_label", "line_label"]
+    ordering = ["station_label", "line_label"]  # type: ignore[reportIncompatibleVariableOverride]
 
 
 register_snippet(TransportStationViewSet)
