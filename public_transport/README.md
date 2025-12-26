@@ -15,7 +15,7 @@ Key concepts:
 ## Page Types
 ### PublicTransportIndexPage
 - Select systems via `system_filters` (checkboxes in admin).
-- Lists systems (and categories, if used).
+- Lists systems.
 - Parent: `HomePage`
 
 ### PublicTransportSystemPage
@@ -53,11 +53,6 @@ Fields include:
 ### Import unified transport data (GeoJSON)
 ```
 python manage.py import_unified_transportation
-```
-
-### Import BTS stations (legacy)
-```
-python manage.py import_bts_stations --category-id <CATEGORY_PAGE_ID>
 ```
 
 ### Sync system/line pages from snippets

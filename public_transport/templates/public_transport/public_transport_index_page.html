@@ -43,23 +43,7 @@
                 </div>
             </section>
         {% endif %}
-        {% if category_pages %}
-            <section class="index-block">
-                <h2>Categories</h2>
-                <div class="tile-grid">
-                    {% for child in category_pages %}
-                        <a class="tile" href="{{ child.url }}">
-                            <div>
-                                <h3>{{ child.title }}</h3>
-                                <p>Browse curated categories</p>
-                            </div>
-                            <span>View</span>
-                        </a>
-                    {% endfor %}
-                </div>
-            </section>
-        {% endif %}
-        {% if not system_pages and not category_pages %}
+        {% if not system_pages %}
             <div class="index-empty">No entries yet.</div>
         {% endif %}
     </section>

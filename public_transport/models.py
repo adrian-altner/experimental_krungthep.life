@@ -80,7 +80,6 @@ class PublicTransportIndexPage(Page):
     ]
     parent_page_types = ["home.HomePage"]
     subpage_types = [
-        "public_transport.PublicTransportCategoryPage",
         "public_transport.PublicTransportSystemPage",
     ]
     base_form_class = PublicTransportIndexPageForm
@@ -90,29 +89,7 @@ class PublicTransportIndexPage(Page):
         context["system_pages"] = PublicTransportSystemPage.objects.child_of(
             self
         ).live()
-        context["category_pages"] = PublicTransportCategoryPage.objects.child_of(
-            self
-        ).live()
         return context
-
-
-class PublicTransportCategoryPage(Page):
-    intro = RichTextField(blank=True)
-    category = models.CharField(max_length=50, default="BTS")
-    system = models.CharField(max_length=50, blank=True)
-
-    content_panels = Page.content_panels + [
-        FieldPanel("intro"),
-        MultiFieldPanel(
-            [
-                FieldPanel("category"),
-                FieldPanel("system"),
-            ],
-            heading="Classification",
-        ),
-    ]
-    parent_page_types = ["public_transport.PublicTransportIndexPage"]
-    subpage_types = ["public_transport.PublicTransportPage"]
 
 
 class PublicTransportSystemPage(Page):
@@ -277,61 +254,6 @@ class PublicTransportStationPage(Page):
                 self.title = self.station.station_label
                 if not self.slug:
                     self.slug = slugify(self.title) or self.slug
-
-
-class PublicTransportPage(Page):
-    category = models.CharField(max_length=50, default="BTS")
-    system = models.CharField(max_length=50, blank=True)
-    line = models.TextField(blank=True)
-    station_code = models.CharField(max_length=20, blank=True)
-    latitude = models.DecimalField(
-        max_digits=9,
-        decimal_places=6,
-        blank=True,
-        null=True,
-        validators=[MinValueValidator(-90), MaxValueValidator(90)],
-    )
-    longitude = models.DecimalField(
-        max_digits=9,
-        decimal_places=6,
-        blank=True,
-        null=True,
-        validators=[MinValueValidator(-180), MaxValueValidator(180)],
-    )
-    wikidata_id = models.CharField(max_length=40, blank=True)
-    wikidata_url = models.URLField(blank=True)
-    intro = RichTextField(blank=True)
-    body = RichTextField(blank=True)
-
-    content_panels = Page.content_panels + [
-        MultiFieldPanel(
-            [
-                FieldPanel("category"),
-                FieldPanel("system"),
-                FieldPanel("line"),
-                FieldPanel("station_code"),
-            ],
-            heading="Classification",
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel("latitude"),
-                FieldPanel("longitude"),
-            ],
-            heading="Coordinates",
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel("wikidata_id"),
-                FieldPanel("wikidata_url"),
-            ],
-            heading="External references",
-        ),
-        FieldPanel("intro"),
-        FieldPanel("body"),
-    ]
-    parent_page_types = ["public_transport.PublicTransportCategoryPage"]
-    subpage_types = []
 
 
 class TransportStation(index.Indexed, models.Model):
