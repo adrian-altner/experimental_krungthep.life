@@ -16,6 +16,8 @@ class CustomUserChangeForm(UserChangeForm):
             "email",
             "first_name",
             "last_name",
+            "author_slug",
+            "bio",
             "is_active",
             "is_staff",
             "is_superuser",

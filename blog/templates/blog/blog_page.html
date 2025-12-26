@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
-{% load static wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags %}
 
-{% block body_class %}template-blogindexpage{% endblock %}
+{% block body_class %}
+template-blogindexpage
+{% endblock body_class %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/blog.css' %}">
@@ -10,19 +12,117 @@
 
 {% block content %}
     <section class="blog-index">
-        <h1>{{ page.title }}</h1>
+        <header class="blog-hero">
+            <div>
+                <p class="eyebrow">Journal</p>
+                <h1>{{ page.title }}</h1>
+                {% if page.intro %}
+                    <div class="intro">{{ page.intro|richtext }}</div>
+                {% endif %}
+            </div>
+            <div class="hero-actions">
+                <a class="clear-filters" href="{% routablepageurl page 'author_index' %}">Authors</a>
+                {% if active_tag or active_category or active_author %}
+                    <a class="clear-filters" href="{{ page.url }}">Clear filters</a>
+                {% endif %}
+            </div>
+        </header>
 
-        <div class="intro">{{ page.intro|richtext }}</div>
+        {% if categories or tags or authors %}
+            <div class="blog-filters">
+                {% if categories %}
+                    <div class="filter-group">
+                        <span class="filter-label">Categories</span>
+                        <div class="filter-chips">
+                            <a class="chip{% if not active_category %} is-active{% endif %}" href="?{% if active_tag %}tag={{ active_tag }}{% endif %}{% if active_tag and active_author %}&{% endif %}{% if active_author %}author={{ active_author }}{% endif %}">
+                                All
+                            </a>
+                            {% for category in categories %}
+                                <a class="chip{% if active_category == category.slug %} is-active{% endif %}" href="?category={{ category.slug }}{% if active_tag %}&tag={{ active_tag }}{% endif %}{% if active_author %}&author={{ active_author }}{% endif %}">
+                                    {{ category.title }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if tags %}
+                    <div class="filter-group">
+                        <span class="filter-label">Tags</span>
+                        <div class="filter-chips">
+                            <a class="chip{% if not active_tag %} is-active{% endif %}" href="?{% if active_category %}category={{ active_category }}{% endif %}{% if active_category and active_author %}&{% endif %}{% if active_author %}author={{ active_author }}{% endif %}">
+                                All
+                            </a>
+                            {% for tag in tags %}
+                                <a class="chip{% if active_tag == tag.slug %} is-active{% endif %}" href="?tag={{ tag.slug }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_author %}&author={{ active_author }}{% endif %}">
+                                    {{ tag.name }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+                {% if authors %}
+                    <div class="filter-group">
+                        <span class="filter-label">Authors</span>
+                        <div class="filter-chips">
+                            <a class="chip{% if not active_author %} is-active{% endif %}" href="?{% if active_category %}category={{ active_category }}{% endif %}{% if active_category and active_tag %}&{% endif %}{% if active_tag %}tag={{ active_tag }}{% endif %}">
+                                All
+                            </a>
+                            {% for author in authors %}
+                                <a class="chip{% if active_author == author.author_slug %} is-active{% endif %}" href="?author={{ author.author_slug }}{% if active_category %}&category={{ active_category }}{% endif %}{% if active_tag %}&tag={{ active_tag }}{% endif %}">
+                                    {{ author.get_full_name|default:author.username }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
 
         <div class="blog-grid">
-            {% for post in page.get_children %}
+            {% for post in posts %}
                 <article class="blog-card">
-                    <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
-                    <p class="meta">{{ post.specific.date }}</p>
-                    <p class="excerpt">{{ post.specific.intro }}</p>
+                    {% if post.featured_image %}
+                        {% image post.featured_image fill-640x420 as card_img %}
+                        <a class="card-image" href="{% pageurl post %}">
+                            <img src="{{ card_img.url }}" alt="{{ post.featured_image.title }}">
+                        </a>
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="meta">
+                            <span>{{ post.date }}</span>
+                            {% if post.authors.exists %}
+                                <span class="meta-divider">•</span>
+                                <span class="meta-authors">
+                                    {% for author in post.authors.all %}
+                                        <span class="meta-author">
+                                            {% if author.wagtail_userprofile.avatar %}
+                                                <img class="author-avatar" src="{{ author.wagtail_userprofile.avatar.url }}" alt="{{ author.get_full_name|default:author.username }}">
+                                            {% endif %}
+                                            <a class="author-link" href="{% routablepageurl page 'author_detail' author.author_slug %}">
+                                                {{ author.get_full_name|default:author.username }}
+                                            </a>{% if not forloop.last %},{% endif %}
+                                        </span>
+                                    {% endfor %}
+                                </span>
+                            {% endif %}
+                        </p>
+                        <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
+                        <p class="excerpt">{{ post.intro }}</p>
+                        {% if post.categories.exists or post.tags.exists %}
+                            <div class="card-taxonomy">
+                                {% for category in post.categories.all %}
+                                    <span class="taxon">{{ category.title }}</span>
+                                {% endfor %}
+                                {% for tag in post.tags.all %}
+                                    <span class="taxon taxon--tag">#{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
                 </article>
+            {% empty %}
+                <div class="empty-state">No posts match these filters yet.</div>
             {% endfor %}
         </div>
     </section>
-
-{% endblock %}
+{% endblock content %}

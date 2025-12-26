@@ -30,3 +30,11 @@
     box-shadow: 0 16px 36px var(--shadow);
     margin-bottom: 24px;
 }
+
+.about-page .summary {
+    margin-top: 24px;
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    color: rgba(30, 28, 26, 0.7);
+    border-top: 1px solid rgba(30, 28, 26, 0.12);
+    padding-top: 16px;
+}

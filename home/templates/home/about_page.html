@@ -2,7 +2,9 @@
 
 {% load static wagtailcore_tags %}
 
-{% block body_class %}template-aboutpage{% endblock %}
+{% block body_class %}
+template-aboutpage
+{% endblock body_class %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/about_page.css' %}">
@@ -12,10 +14,21 @@
     <section class="about-page">
         <h1>{{ page.title }}</h1>
         {% if page.intro %}
-            <div class="intro">{{ page.intro|richtext }}</div>
+            <div class="intro">
+                {% for block in page.intro %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
         {% endif %}
         {% if page.body %}
-            <div class="body">{{ page.body|richtext }}</div>
+            <div class="body">
+                {% for block in page.body %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if page.summary %}
+            <div class="summary">{{ page.summary }}</div>
         {% endif %}
     </section>
 {% endblock content %}

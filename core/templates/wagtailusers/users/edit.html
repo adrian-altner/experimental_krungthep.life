@@ -1,0 +1,19 @@
+{% extends "wagtailusers/users/edit.html" %}
+
+{% load wagtailadmin_tags %}
+
+{% block extra_fields %}
+    {% if form.bio %}
+        <li>{% formattedfield form.bio %}</li>
+    {% endif %}
+    {% if form.avatar %}
+        <li>
+            {% if user.wagtail_userprofile.avatar %}
+                <div class="w-mb-2">
+                    <img class="user-avatar-preview" src="{{ user.wagtail_userprofile.avatar.url }}" alt="{{ user.get_full_name|default:user.username }}" width="64" height="64">
+                </div>
+            {% endif %}
+            {% formattedfield form.avatar %}
+        </li>
+    {% endif %}
+{% endblock extra_fields %}

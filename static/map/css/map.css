@@ -1,0 +1,12 @@
+.map-block {
+    margin: 0;
+}
+
+.map-block__canvas {
+    position: relative;
+    height: 360px;
+    border-radius: 20px;
+    background: linear-gradient(120deg, #f1ede4, #e9f1f4);
+    border: 1px solid #d6d6d6;
+    overflow: hidden;
+}

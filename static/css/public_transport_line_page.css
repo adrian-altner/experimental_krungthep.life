@@ -1,0 +1,184 @@
+:root {
+    --line-bg: #f3e9dc;
+    --line-card: #fffdf9;
+    --line-accent: #c4582f;
+    --line-ink: #1e1c1a;
+}
+
+.public-transport-line {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+    background: radial-gradient(circle at top right, #efe2d2, transparent 55%);
+}
+
+.line-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 24px;
+    padding: 28px 28px 24px;
+    background: linear-gradient(135deg, var(--line-bg), #f9f2ea);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(30, 28, 26, 0.08);
+    margin-bottom: 28px;
+}
+
+.line-hero h1 {
+    margin: 6px 0 10px;
+    font-family: "Playfair Display", "Georgia", serif;
+    font-size: clamp(2rem, 2.4vw, 2.8rem);
+}
+
+.line-hero .eyebrow {
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(30, 28, 26, 0.6);
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+}
+
+.line-hero .intro {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 1rem;
+    color: rgba(30, 28, 26, 0.8);
+    max-width: 520px;
+}
+
+.line-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 0.85rem;
+    color: rgba(30, 28, 26, 0.7);
+}
+
+.line-meta span {
+    background: rgba(196, 88, 47, 0.1);
+    padding: 8px 12px;
+    border-radius: 999px;
+    text-align: right;
+}
+
+.station-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+.station-card {
+    background: var(--line-card);
+    border-radius: 16px;
+    padding: 18px 18px 16px;
+    border: 1px solid rgba(30, 28, 26, 0.08);
+    box-shadow: 0 12px 24px rgba(30, 28, 26, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+}
+
+.station-card__header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+}
+
+.station-card__header h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-family: "Playfair Display", "Georgia", serif;
+    color: var(--line-ink);
+}
+
+.station-code {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-weight: 600;
+    color: var(--line-accent);
+}
+
+.station-card__meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 0;
+}
+
+.station-card__meta dt {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(30, 28, 26, 0.5);
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    margin-bottom: 4px;
+}
+
+.station-card__meta dd {
+    margin: 0;
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 0.95rem;
+    color: var(--line-ink);
+}
+
+.station-card__link {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--line-accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.station-card:hover,
+.station-card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 18px 36px rgba(30, 28, 26, 0.12);
+}
+
+.station-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.station-badge--detail {
+    background: rgba(42, 127, 114, 0.14);
+    color: #1e5f56;
+}
+
+.station-badge--map {
+    background: rgba(196, 88, 47, 0.14);
+    color: #9b3d1e;
+}
+
+.station-badge--missing {
+    background: rgba(30, 28, 26, 0.12);
+    color: rgba(30, 28, 26, 0.7);
+}
+
+.station-empty {
+    padding: 24px;
+    background: var(--line-bg);
+    border-radius: 12px;
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    color: rgba(30, 28, 26, 0.7);
+}
+
+@media (max-width: 900px) {
+    .line-hero {
+        grid-template-columns: 1fr;
+    }
+
+    .line-meta span {
+        text-align: left;
+    }
+}

@@ -86,9 +86,10 @@ class PublicTransportIndexPage(Page):
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context["system_pages"] = PublicTransportSystemPage.objects.child_of(
-            self
-        ).live()
+        context["system_pages"] = (
+            PublicTransportSystemPage.objects.child_of(self)  # type: ignore[attr-defined]
+            .live()  # type: ignore[attr-defined]
+        )
         return context
 
 
@@ -126,11 +127,18 @@ class PublicTransportSystemPage(Page):
         ),
     ]
     parent_page_types = ["public_transport.PublicTransportIndexPage"]
-    subpage_types = ["public_transport.PublicTransportLinePage"]
+    subpage_types = [
+        "public_transport.PublicTransportLinePage",
+        "public_transport.PublicTransportStationPage",
+    ]
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context["line_pages"] = self.get_children().live().specific()
+        context["line_pages"] = (
+            self.get_children()
+            .live()  # type: ignore[attr-defined]
+            .specific()  # type: ignore[attr-defined]
+        )
         if self.show_stations:
             sort_key = self.station_sort or "station_label"
             stations = TransportStation.objects.filter(
@@ -149,8 +157,8 @@ class PublicTransportSystemPage(Page):
             if self.show_stations and len(path_components) == 1:
                 station_slug = path_components[0]
                 station_page = (
-                    PublicTransportStationPage.objects.descendant_of(self)
-                    .live()
+                    PublicTransportStationPage.objects.descendant_of(self)  # type: ignore[attr-defined]
+                    .live()  # type: ignore[attr-defined]
                     .filter(slug=station_slug)
                     .first()
                 )
@@ -230,17 +238,23 @@ class PublicTransportStationPage(Page):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context["station"] = self.station
-        parent = self.get_parent().specific if self.get_parent() else None
-        context["parent_line"] = parent if isinstance(parent, PublicTransportLinePage) else None
-        context["parent_system"] = parent if isinstance(parent, PublicTransportSystemPage) else None
+        parent = self.get_parent()
+        parent_specific = parent.specific if parent else None  # type: ignore[attr-defined]
+        context["parent_line"] = (
+            parent_specific if isinstance(parent_specific, PublicTransportLinePage) else None
+        )
+        context["parent_system"] = (
+            parent_specific if isinstance(parent_specific, PublicTransportSystemPage) else None
+        )
         return context
 
     def clean(self):
         super().clean()
-        parent = self.get_parent().specific if self.get_parent() else None
-        if isinstance(parent, PublicTransportLinePage):
-            self.parent_line_display = parent.title
-        if isinstance(parent, PublicTransportSystemPage) and not parent.show_stations:
+        parent = self.get_parent()
+        parent_specific = parent.specific if parent else None  # type: ignore[attr-defined]
+        if isinstance(parent_specific, PublicTransportLinePage):
+            self.parent_line_display = parent_specific.title
+        if isinstance(parent_specific, PublicTransportSystemPage) and not parent_specific.show_stations:
             raise ValidationError(
                 {"__all__": "This system page is not set to show stations."}
             )
@@ -340,10 +354,16 @@ def build_station_cards(stations, parent_page=None):
     pages = PublicTransportStationPage.objects.filter(
         station__in=stations
     ).select_related("station")
-    page_map = {page.station_id: page for page in pages if page.station_id}
+    page_map = {
+        page.station_id: page for page in pages if page.station_id  # type: ignore[attr-defined]
+    }
     if parent_page:
         scoped_pages = pages.child_of(parent_page)  # type: ignore[attr-defined]
-        scoped_map = {page.station_id: page for page in scoped_pages if page.station_id}
+        scoped_map = {
+            page.station_id: page  # type: ignore[attr-defined]
+            for page in scoped_pages
+            if page.station_id  # type: ignore[attr-defined]
+        }
     else:
         scoped_map = {}
     cards = []

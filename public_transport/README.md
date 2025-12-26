@@ -72,3 +72,16 @@ when a station detail page does not exist. The map page renders a single marker.
 - Station detail pages can exist under system pages (if show-stations is enabled)
   or under line pages.
 - When a station detail page exists, station cards show a “Detail page” badge.
+
+## Routing & Linking
+- The index page only lists system pages.
+- System pages render either line cards or station cards:
+  - When **Show stations** is disabled, the system page lists line pages.
+  - When **Show stations** is enabled, the system page lists stations directly.
+- Station cards are built from `TransportStation` snippets, not from the page tree.
+- Link resolution for station cards:
+  - If a `PublicTransportStationPage` exists, the card links to its detail page.
+  - Otherwise the card links to the transport map view with coordinates.
+- When **Show stations** is enabled, system pages can route directly to station
+  detail pages at `/public-transport/<system-slug>/<station-slug>/`, even when
+  the station page is stored under a line page.

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load static wagtailcore_tags wagtailimages_tags %}
+
+{% block body_class %}
+template-blankpage
+{% endblock body_class %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/blank_page.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <section class="blank-page">
+        <h1>{{ page.title }}</h1>
+        {% if page.intro %}
+            <div class="intro">
+                {% for block in page.intro %}
+                    {% include_block block %}
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% for block in page.body %}
+            <div class="stream-block">
+                {% include_block block %}
+            </div>
+        {% empty %}
+            <div class="empty-state">No content yet.</div>
+        {% endfor %}
+        {% if page.summary %}
+            <div class="summary">{{ page.summary }}</div>
+        {% endif %}
+    </section>
+{% endblock content %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% load static wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags %}
+
+{% block body_class %}
+template-blogauthordetailpage
+{% endblock body_class %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/blog.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <section class="blog-index author-detail">
+        <header class="blog-hero author-hero">
+            <div class="author-hero__info">
+                <p class="eyebrow">Author profile</p>
+                <h1>{{ author.get_full_name|default:author.username }}</h1>
+                {% if author.bio %}
+                    <div class="author-hero__bio">
+                        {% for block in author.bio %}
+                            {% include_block block %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <a class="back-link" href="{% routablepageurl page 'author_index' %}">All authors</a>
+            </div>
+            {% if author.wagtail_userprofile.avatar %}
+                <div class="author-hero__image">
+                    <img class="author-avatar author-avatar--large" src="{{ author.wagtail_userprofile.avatar.url }}" alt="{{ author.get_full_name|default:author.username }}">
+                </div>
+            {% endif %}
+        </header>
+
+        <div class="blog-grid">
+            {% for post in posts %}
+                <article class="blog-card">
+                    {% if post.featured_image %}
+                        {% image post.featured_image fill-640x420 as card_img %}
+                        <a class="card-image" href="{% pageurl post %}">
+                            <img src="{{ card_img.url }}" alt="{{ post.featured_image.title }}">
+                        </a>
+                    {% endif %}
+                    <div class="card-body">
+                        <p class="meta">
+                            <span>{{ post.date }}</span>
+                        </p>
+                        <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
+                        <p class="excerpt">{{ post.intro }}</p>
+                        {% if post.categories.exists or post.tags.exists %}
+                            <div class="card-taxonomy">
+                                {% for category in post.categories.all %}
+                                    <span class="taxon">{{ category.title }}</span>
+                                {% endfor %}
+                                {% for tag in post.tags.all %}
+                                    <span class="taxon taxon--tag">#{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </article>
+            {% empty %}
+                <div class="empty-state">No posts from this author yet.</div>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock content %}

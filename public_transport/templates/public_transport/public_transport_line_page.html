@@ -2,7 +2,9 @@
 
 {% load static wagtailcore_tags %}
 
-{% block body_class %}template-publictransportlinepage{% endblock %}
+{% block body_class %}
+template-publictransportlinepage
+{% endblock body_class %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/public_transport_line_page.css' %}">
@@ -60,7 +62,8 @@
                             </div>
                         </a>
                     {% elif station.latitude and station.longitude %}
-                        <a class="station-card" href="/map/transport/?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
+                        {% url "transport_map" as transport_map_url %}
+                        <a class="station-card" href="{{ transport_map_url }}?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
                             <div class="station-card__header">
                                 <h2>{{ station.station_label }}</h2>
                                 {% if station.station_codes %}

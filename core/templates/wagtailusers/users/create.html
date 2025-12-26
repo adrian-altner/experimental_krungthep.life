@@ -1,0 +1,12 @@
+{% extends "wagtailusers/users/create.html" %}
+
+{% load wagtailadmin_tags %}
+
+{% block extra_fields %}
+    {% if form.bio %}
+        <li>{% formattedfield form.bio %}</li>
+    {% endif %}
+    {% if form.avatar %}
+        <li>{% formattedfield form.avatar %}</li>
+    {% endif %}
+{% endblock extra_fields %}

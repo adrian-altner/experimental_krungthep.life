@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
-{% load static wagtailcore_tags %}
+{% load static wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags %}
 
-{% block body_class %}template-blogpage{% endblock %}
+{% block body_class %}
+template-blogpage
+{% endblock body_class %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/blog.css' %}">
@@ -10,10 +12,64 @@
 
 {% block content %}
     <article class="blog-post">
-        <h1>{{ page.title }}</h1>
-        <p class="meta">{{ page.date }}</p>
-
-        <div class="intro">{{ page.intro }}</div>
+        {% with blog_index=page.get_parent.specific %}
+        <header class="post-hero">
+            <div class="post-hero__text">
+                <p class="eyebrow">Blog post</p>
+                <h1>{{ page.title }}</h1>
+                <p class="meta">
+                    <span>{{ page.date }}</span>
+                    {% if page.authors.exists %}
+                        <span class="meta-divider">•</span>
+                        <span class="meta-authors">
+                            {% for author in page.authors.all %}
+                                <span class="meta-author">
+                                    {% if author.wagtail_userprofile.avatar %}
+                                        <img class="author-avatar" src="{{ author.wagtail_userprofile.avatar.url }}" alt="{{ author.get_full_name|default:author.username }}">
+                                    {% endif %}
+                                    <a class="author-link" href="{% routablepageurl blog_index 'author_detail' author.author_slug %}">
+                                        {{ author.get_full_name|default:author.username }}
+                                    </a>{% if not forloop.last %},{% endif %}
+                                </span>
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+                </p>
+                {% if page.categories.exists or page.tags.exists %}
+                    <div class="post-taxonomy">
+                        {% for category in page.categories.all %}
+                            <span class="taxon">{{ category.title }}</span>
+                        {% endfor %}
+                        {% for tag in page.tags.all %}
+                            <span class="taxon taxon--tag">#{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% if page.summary %}
+                    <div class="post-summary">{{ page.summary }}</div>
+                {% endif %}
+                {% if page.authors.count == 1 %}
+                    {% with primary_author=page.authors.first %}
+                        {% if primary_author.bio %}
+                            <div class="author-bio">
+                                {% for block in primary_author.bio %}
+                                        {% include_block block %}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    {% endif %}
+                {% if page.intro %}
+                    <div class="intro">{{ page.intro }}</div>
+                {% endif %}
+            </div>
+            {% if page.featured_image %}
+                {% image page.featured_image fill-720x520 as hero_img %}
+                <div class="post-hero__image">
+                    <img src="{{ hero_img.url }}" alt="{{ page.featured_image.title }}">
+                </div>
+            {% endif %}
+        </header>
 
         {% for block in page.body %}
             <div class="stream-block">
@@ -22,6 +78,6 @@
         {% endfor %}
 
         <a class="back-link" href="{{ page.get_parent.url }}">Return to blog</a>
+        {% endwith %}
     </article>
-
-{% endblock %}
+{% endblock content %}
