@@ -8,6 +8,7 @@ from wagtail.fields import StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 
+from core.image_utils import assign_page_images
 
 class HomePage(Page):
     subpage_types = ["home.AboutPage", "home.BlankPage"]
@@ -66,6 +67,10 @@ class AboutPage(Page):
     parent_page_types = ["home.HomePage"]
     subpage_types = []
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        assign_page_images(self)
+
 
 class BlankPage(Page):
     rich_text_features = [
@@ -120,3 +125,7 @@ class BlankPage(Page):
     parent_page_types = ["home.HomePage"]
     subpage_types = []
     template = "home/blank_page.html"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        assign_page_images(self)

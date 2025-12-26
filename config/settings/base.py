@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     "core",
     "blog",
     "home",
-    "accounts",
+    "accounts.apps.AccountsConfig",
     "map",
     "poi",
     "public_transport",
@@ -172,6 +172,20 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10_000
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "Krung Thep Life"
+WAGTAILIMAGES_IMAGE_MODEL = "core.CustomImage"
+WAGTAILIMAGES_RENDITION_MODEL = "core.CustomRendition"
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+WAGTAILIMAGES_FORMAT_CONVERSIONS = {
+    "bmp": "webp",
+    "gif": "webp",
+    "jpeg": "webp",
+    "jpg": "webp",
+    "png": "webp",
+    "tiff": "webp",
+    "webp": "webp",
+}
 
 # Pages of these models won't show up in the primary navigation.
 NAV_EXCLUDE_MODELS = ["blog.blogpost"]

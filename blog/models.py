@@ -12,6 +12,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
 from django.http import Http404
+from core.image_utils import assign_page_images
 
 
 @register_snippet
@@ -137,7 +138,7 @@ class BlogPost(Page):
     featured = models.BooleanField(default=False)
     publish_date = models.DateField(blank=True, null=True)
     featured_image = models.ForeignKey(
-        "wagtailimages.Image",
+        settings.WAGTAILIMAGES_IMAGE_MODEL,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -188,3 +189,7 @@ class BlogPost(Page):
     parent_page_types = ["blog.BlogPage"]
     subpage_types = []
     template = "blog/blog_post.html"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        assign_page_images(self)
