@@ -1,7 +1,10 @@
-.PHONY: help install run migrate makemigrations test shell createsuperuser collectstatic
+.PHONY: help venv install run migrate makemigrations test shell createsuperuser collectstatic
+
+PYTHON ?= python3
 
 help:
 	@echo "Targets:"
+	@echo "  venv             Create a local virtualenv in .venv"
 	@echo "  install          Install Python dependencies"
 	@echo "  run              Start development server"
 	@echo "  migrate          Apply database migrations"
@@ -11,26 +14,30 @@ help:
 	@echo "  createsuperuser  Create an admin user"
 	@echo "  collectstatic    Collect static files"
 
+venv:
+	$(PYTHON) -m venv .venv
+	@echo "Activate with: source .venv/bin/activate"
+
 install:
-	pip install -r requirements.txt
+	$(PYTHON) -m pip install -r requirements.txt
 
 run:
-	python manage.py runserver
+	$(PYTHON) manage.py runserver
 
 migrate:
-	python manage.py migrate
+	$(PYTHON) manage.py migrate
 
 makemigrations:
-	python manage.py makemigrations
+	$(PYTHON) manage.py makemigrations
 
 test:
-	python manage.py test
+	$(PYTHON) manage.py test
 
 shell:
-	python manage.py shell
+	$(PYTHON) manage.py shell
 
 createsuperuser:
-	python manage.py createsuperuser
+	$(PYTHON) manage.py createsuperuser
 
 collectstatic:
-	python manage.py collectstatic --noinput
+	$(PYTHON) manage.py collectstatic --noinput

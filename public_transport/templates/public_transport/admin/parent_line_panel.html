@@ -1,0 +1,12 @@
+<fieldset class="w-field__wrapper">
+    <legend class="w-field__label">Parent</legend>
+    <div class="w-field__input">
+        {% if parent_line %}
+            <span>Line: {{ parent_line.title }}</span>
+        {% elif parent_system %}
+            <span>System: {{ parent_system.title }}</span>
+        {% else %}
+            <span>No parent detected.</span>
+        {% endif %}
+    </div>
+</fieldset>

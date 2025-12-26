@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% load static wagtailcore_tags %}
+
+{% block body_class %}template-publictransportsystempage{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/public_transport_system_page.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <section class="public-transport-system">
+        <header class="system-hero">
+            <div>
+                <p class="eyebrow">Transport system</p>
+                <h1>{{ page.title }}</h1>
+                {% if page.intro %}
+                    <div class="intro">{{ page.intro|richtext }}</div>
+                {% endif %}
+            </div>
+            <div class="system-meta">
+                {% if page.system_qid %}<span>System QID: {{ page.system_qid }}</span>{% endif %}
+                {% if page.show_stations %}<span>Stations view enabled</span>{% endif %}
+            </div>
+        </header>
+        {% if page.show_stations %}
+            <div class="station-grid">
+                {% for card in station_cards %}
+                    {% with station=card.station %}
+                    {% if card.page_url %}
+                        <a class="station-card" href="{{ card.page_url }}">
+                    {% elif station.latitude and station.longitude %}
+                        <a class="station-card" href="/map/transport/?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
+                    {% else %}
+                        <div class="station-card">
+                    {% endif %}
+                        <h2>{{ station.station_label }}</h2>
+                        {% if station.station_codes %}
+                            <p class="station-code">{{ station.station_codes }}</p>
+                        {% endif %}
+                        <p class="station-line">{{ station.line_label }}</p>
+                        <p class="station-link">
+                            {% if card.page_url %}
+                                <span class="station-badge station-badge--detail">Detail page</span>
+                                <span>View details</span>
+                            {% elif station.latitude and station.longitude %}
+                                <span class="station-badge station-badge--map">Map</span>
+                                <span>View on map</span>
+                            {% else %}
+                                <span class="station-badge station-badge--missing">Missing</span>
+                                <span>No coordinates</span>
+                            {% endif %}
+                        </p>
+                    {% if card.page_url or station.latitude and station.longitude %}
+                        </a>
+                    {% else %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+                {% empty %}
+                    <div class="station-empty">No stations found.</div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="line-grid">
+                {% for line in line_pages %}
+                    <a class="line-card" href="{{ line.url }}">
+                        <h2>{{ line.title }}</h2>
+                        <p>Explore line stations</p>
+                    </a>
+                {% empty %}
+                    <div class="station-empty">No lines yet.</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+{% endblock content %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load wagtailcore_tags %}
+
+{% block body_class %}template-publictransportstationpage{% endblock %}
+
+{% block content %}
+    <section class="public-transport-station">
+        <h1>{{ page.title }}</h1>
+        {% if parent_line %}
+            <p>Line: <a href="{{ parent_line.url }}">{{ parent_line.title }}</a></p>
+        {% endif %}
+        {% if station %}
+            <ul class="station-meta">
+                {% if station.system_label %}<li>System: {{ station.system_label }}</li>{% endif %}
+                {% if station.line_label %}<li>Line: {{ station.line_label }}</li>{% endif %}
+                {% if station.station_codes %}<li>Station code: {{ station.station_codes }}</li>{% endif %}
+                {% if station.opening %}<li>Opened: {{ station.opening }}</li>{% endif %}
+                {% if station.latitude and station.longitude %}
+                    <li>
+                        <a href="/map/transport/?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
+                            View on map
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        {% endif %}
+        {% if page.intro %}
+            <div class="intro">{{ page.intro|richtext }}</div>
+        {% endif %}
+        {% if page.body %}
+            <div class="body">{{ page.body|richtext }}</div>
+        {% endif %}
+    </section>
+{% endblock content %}

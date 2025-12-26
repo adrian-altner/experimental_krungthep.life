@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% load static wagtailcore_tags %}
+
+{% block body_class %}template-publictransportindexpage{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/public_transport_index_page.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <section class="public-transport-index">
+        <header class="index-hero">
+            <div>
+                <p class="eyebrow">Bangkok network</p>
+                <h1>{{ page.title }}</h1>
+                {% if page.intro %}
+                    <div class="intro">{{ page.intro|richtext }}</div>
+                {% endif %}
+            </div>
+            <div class="hero-card">
+                <p>Choose a system to explore the lines and stations.</p>
+                <div class="hero-tags">
+                    {% for child in system_pages %}
+                        <span>{{ child.title }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </header>
+        {% if system_pages %}
+            <section class="index-block">
+                <h2>Systems</h2>
+                <div class="tile-grid">
+                    {% for child in system_pages %}
+                        <a class="tile" href="{{ child.url }}">
+                            <div>
+                                <h3>{{ child.title }}</h3>
+                                <p>Explore lines and stations</p>
+                            </div>
+                            <span>View</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+        {% if category_pages %}
+            <section class="index-block">
+                <h2>Categories</h2>
+                <div class="tile-grid">
+                    {% for child in category_pages %}
+                        <a class="tile" href="{{ child.url }}">
+                            <div>
+                                <h3>{{ child.title }}</h3>
+                                <p>Browse curated categories</p>
+                            </div>
+                            <span>View</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+        {% if not system_pages and not category_pages %}
+            <div class="index-empty">No entries yet.</div>
+        {% endif %}
+    </section>
+{% endblock content %}

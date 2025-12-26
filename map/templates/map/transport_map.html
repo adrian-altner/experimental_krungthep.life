@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block body_class %}template-transportmap{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'map/vendor/leaflet/leaflet.css' %}">
+<link rel="stylesheet" href="{% static 'map/css/map.css' %}">
+{% endblock extra_css %}
+
+{% block content %}
+    <section class="transport-map">
+        <h1>{{ title }}</h1>
+        {% include "map/map.html" with map_points=map_points map_id="transport-map" map_data_id="transport-map-data" empty_message="No coordinates provided." %}
+    </section>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'map/vendor/leaflet/leaflet.js' %}"></script>
+<script src="{% static 'map/js/transport_map.js' %}"></script>
+{% endblock extra_js %}
