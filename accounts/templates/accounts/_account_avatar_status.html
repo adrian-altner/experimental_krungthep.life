@@ -1,0 +1,12 @@
+{% load wagtailadmin_tags %}
+
+{% if avatar_user.wagtail_userprofile.avatar %}
+<div class="w-mt-3">
+    <img class="avatar large" src="{{ avatar_user.wagtail_userprofile.avatar.url }}" alt="{{ avatar_user.get_full_name|default:avatar_user.username }}">
+</div>
+{% else %}
+{% avatar user=avatar_user classname="avatar-span w-block w-mt-3" size="large" %}
+{% endif %}
+{% if status_message %}
+<p class="help">{{ status_message }}</p>
+{% endif %}

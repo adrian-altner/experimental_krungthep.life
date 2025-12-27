@@ -1,0 +1,8 @@
+{% if avatar_user.wagtail_userprofile.avatar %}
+<div class="w-mb-2">
+    <img class="user-avatar-preview" src="{{ avatar_user.wagtail_userprofile.avatar.url }}" alt="{{ avatar_user.get_full_name|default:avatar_user.username }}" width="64" height="64">
+</div>
+{% endif %}
+{% if status_message %}
+<p class="help">{{ status_message }}</p>
+{% endif %}

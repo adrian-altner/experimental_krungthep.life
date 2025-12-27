@@ -1,5 +1,7 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.templatetags.static import static
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from wagtail import hooks
@@ -29,3 +31,10 @@ def register_bio_panel(request, user, profile):
 def add_user_admin_css():
     return '<link rel="stylesheet" href="/static/accounts/css/admin.css">'
 
+
+@hooks.register("insert_global_admin_js")
+def add_admin_htmx():
+    return format_html(
+        '<script type="module" src="{}"></script>',
+        static("vite/app.js"),
+    )

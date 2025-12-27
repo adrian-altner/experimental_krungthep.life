@@ -1,0 +1,69 @@
+:root {
+    --blank-ink: #1a1a1a;
+    --blank-muted: rgba(26, 26, 26, 0.68);
+    --blank-line: rgba(26, 26, 26, 0.12);
+}
+
+.blank-page {
+    max-width: 860px;
+    margin: 0 auto 96px;
+    padding: 32px 24px 0;
+}
+
+.blank-page h1 {
+    font-family: "Playfair Display", "Georgia", serif;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    margin-bottom: 16px;
+    color: var(--blank-ink);
+}
+
+.blank-page .intro {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    font-size: 1.05rem;
+    color: var(--blank-muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+}
+
+.blank-page .stream-block {
+    margin-bottom: 20px;
+}
+
+.blank-page .stream-block h2 {
+    margin: 24px 0 12px;
+    font-family: "Playfair Display", "Georgia", serif;
+    color: var(--blank-ink);
+}
+
+.blank-page .stream-block p {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    line-height: 1.7;
+    color: var(--blank-muted);
+}
+
+.blank-page img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+    border: 1px solid var(--blank-line);
+    margin: 8px 0 20px;
+}
+
+.blank-page .empty-state {
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    color: var(--blank-muted);
+}
+
+.blank-page .summary {
+    margin-top: 24px;
+    font-family: "Source Sans 3", "Helvetica Neue", sans-serif;
+    color: var(--blank-muted);
+    border-top: 1px solid var(--blank-line);
+    padding-top: 16px;
+}
+
+@media (max-width: 720px) {
+    .blank-page {
+        padding-top: 20px;
+    }
+}

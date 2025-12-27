@@ -8,11 +8,13 @@
     {% endif %}
     {% if form.avatar %}
         <li>
-            {% if user.wagtail_userprofile.avatar %}
-                <div class="w-mb-2">
-                    <img class="user-avatar-preview" src="{{ user.wagtail_userprofile.avatar.url }}" alt="{{ user.get_full_name|default:user.username }}" width="64" height="64">
-                </div>
-            {% endif %}
+            <div id="avatar-panel">
+                {% if user.wagtail_userprofile.avatar %}
+                    <div class="w-mb-2">
+                        <img class="user-avatar-preview" src="{{ user.wagtail_userprofile.avatar.url }}" alt="{{ user.get_full_name|default:user.username }}" width="64" height="64">
+                    </div>
+                {% endif %}
+            </div>
             {% formattedfield form.avatar %}
         </li>
     {% endif %}

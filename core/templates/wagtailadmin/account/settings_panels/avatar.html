@@ -1,0 +1,44 @@
+{% extends "wagtailadmin/account/settings_panels/avatar.html" %}
+
+{% load i18n wagtailadmin_tags %}
+
+{% block content %}
+    <div class="w-avatar-panel w-flex w-flex-wrap w-items-center">
+        <div class="w-avatar-panel__image w-mr-9 w-mb-5">
+            {% if form.avatar.value %}
+                <input
+                    class="avatar-clear"
+                    type="checkbox"
+                    name="avatar-avatar-clear"
+                    id="avatar-avatar-clear_id"
+                    hx-post="{% url 'wagtailusers_avatar_upload' request.user.pk %}?context=account"
+                    hx-encoding="multipart/form-data"
+                    hx-target="#account-avatar-preview"
+                    hx-swap="innerHTML"
+                    hx-include="[name=csrfmiddlewaretoken]"
+                    hx-trigger="change"
+                >
+                <label for="avatar-avatar-clear_id">{% trans "Reset to default" %}</label>
+            {% endif %}
+            <div id="account-avatar-preview">
+                {% avatar user=request.user classname="avatar-span w-block w-mt-3" size="large" %}
+            </div>
+        </div>
+        <div class="w-avatar-panel__form">
+            <label class="avatar-upload-label" for="id_avatar-avatar">{% trans "Upload a profile picture:" %}</label>
+            <input
+                type="file"
+                name="avatar-avatar"
+                accept="image/*"
+                id="id_avatar-avatar"
+                class="avatar-upload-input"
+                hx-post="{% url 'wagtailusers_avatar_upload' request.user.pk %}?context=account"
+                hx-encoding="multipart/form-data"
+                hx-target="#account-avatar-preview"
+                hx-swap="innerHTML"
+                hx-include="[name=csrfmiddlewaretoken]"
+                hx-trigger="change"
+            >
+        </div>
+    </div>
+{% endblock %}
