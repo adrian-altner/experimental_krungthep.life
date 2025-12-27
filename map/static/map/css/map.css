@@ -10,3 +10,50 @@
     border: 1px solid #d6d6d6;
     overflow: hidden;
 }
+
+.map-block__canvas .leaflet-control-zoom,
+.map-block__canvas .leaflet-control-layers,
+.map-block__canvas .leaflet-control-scale {
+    border: 1px solid #e8dbc9;
+    border-radius: 12px;
+    box-shadow: 0 10px 24px rgba(30, 28, 26, 0.12);
+}
+
+.map-block__canvas .leaflet-control-zoom a {
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    color: #1e1c1a;
+    background: #fff;
+}
+
+.map-block__canvas .leaflet-control-zoom a:hover {
+    background: #f5efe6;
+}
+
+.map-block__canvas .leaflet-control-layers-toggle {
+    width: 34px;
+    height: 34px;
+    background-color: #fff;
+    border-radius: 10px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%231e1c1a' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 4 3 8l9 4 9-4-9-4Z'/%3E%3Cpath d='M3 12l9 4 9-4'/%3E%3Cpath d='M3 16l9 4 9-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 18px 18px;
+}
+
+.map-block__canvas .leaflet-control-layers-expanded {
+    padding: 10px 12px;
+    background: #fff;
+    color: #3f3a33;
+    font-size: 12px;
+    border-radius: 12px;
+}
+
+.map-block__canvas .leaflet-control-scale-line {
+    border: 0;
+    border-top: 2px solid #2a7f72;
+    color: #3f3a33;
+    background: #fff;
+    padding: 6px 8px 2px;
+}

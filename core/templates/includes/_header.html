@@ -1,0 +1,36 @@
+{% load wagtailcore_tags navigation_tags user_tags %}
+
+{% wagtail_site as current_site %}
+
+<header class="border-b border-[#e8dbc9] bg-[#fdf8f1]">
+    <div class="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-6 md:flex-row md:items-center md:justify-between">
+        <div class="flex items-center gap-3">
+            <a class="text-lg font-semibold text-[#1e1c1a] hover:text-[#c4582f]" href="{% if current_site %}{% pageurl current_site.root_page %}{% else %}/{% endif %}">
+                {{ settings.WAGTAIL_SITE_NAME }}
+            </a>
+        </div>
+        <nav class="flex flex-wrap items-center gap-4 text-sm text-[#3f3a33] md:justify-center">
+            {% primary_menu as menu_pages %}
+            {% if menu_pages %}
+                {% for menu_page in menu_pages %}
+                    <a class="hover:text-[#c4582f]" href="{% pageurl menu_page %}">{{ menu_page.title }}</a>
+                {% endfor %}
+            {% else %}
+                <a class="hover:text-[#c4582f]" href="{% if current_site %}{% pageurl current_site.root_page %}{% else %}/{% endif %}">Home</a>
+            {% endif %}
+            <a class="hover:text-[#c4582f]" href="{% url 'wagtailadmin_home' %}">Admin</a>
+        </nav>
+        {% if request.user.is_authenticated %}
+            <div class="flex items-center gap-3 rounded-full border border-[#e8dbc9] bg-white px-3 py-1.5 text-xs text-[#3f3a33]">
+                <img class="h-9 w-9 rounded-full border border-[#e8dbc9] object-cover" src="{% user_avatar_url request.user 40 %}" alt="" width="40" height="40">
+                <span class="max-w-[140px] truncate">
+                    {% if request.user.get_full_name %}
+                        {{ request.user.get_full_name }}
+                    {% else %}
+                        {{ request.user.email }}
+                    {% endif %}
+                </span>
+            </div>
+        {% endif %}
+    </div>
+</header>

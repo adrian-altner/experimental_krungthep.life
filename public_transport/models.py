@@ -246,6 +246,19 @@ class PublicTransportStationPage(Page):
         context["parent_system"] = (
             parent_specific if isinstance(parent_specific, PublicTransportSystemPage) else None
         )
+        station_map_points = []
+        if self.station and self.station.latitude and self.station.longitude:
+            subtitle_parts = [self.station.system_label, self.station.line_label]
+            subtitle = " · ".join(filter(None, subtitle_parts))
+            station_map_points.append(
+                {
+                    "lat": float(self.station.latitude),
+                    "lng": float(self.station.longitude),
+                    "title": self.station.station_label,
+                    "subtitle": subtitle,
+                }
+            )
+        context["station_map_points"] = station_map_points
         return context
 
     def clean(self):

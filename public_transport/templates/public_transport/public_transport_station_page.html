@@ -1,35 +1,106 @@
 {% extends "base.html" %}
 
-{% load wagtailcore_tags %}
+{% load static wagtailcore_tags %}
 
 {% block body_class %}template-publictransportstationpage{% endblock body_class %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'map/vendor/leaflet/leaflet.css' %}">
+<link rel="stylesheet" href="{% static 'map/css/map.css' %}">
+{% endblock extra_css %}
+
 {% block content %}
-    <section class="public-transport-station">
-        <h1>{{ page.title }}</h1>
-        {% if parent_line %}
-            <p>Line: <a href="{{ parent_line.url }}">{{ parent_line.title }}</a></p>
-        {% endif %}
-        {% if station %}
-            <ul class="station-meta">
-                {% if station.system_label %}<li>System: {{ station.system_label }}</li>{% endif %}
-                {% if station.line_label %}<li>Line: {{ station.line_label }}</li>{% endif %}
-                {% if station.station_codes %}<li>Station code: {{ station.station_codes }}</li>{% endif %}
-                {% if station.opening %}<li>Opened: {{ station.opening }}</li>{% endif %}
-                {% if station.latitude and station.longitude %}
-                    <li>
-                        <a href="{% url 'map:transport_map' %}?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
-                            View on map
-                        </a>
-                    </li>
+    <section class="bg-[#fdf8f1]">
+        <div class="mx-auto max-w-5xl px-6 py-14">
+            <div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+                <div class="max-w-2xl">
+                    <p class="text-xs uppercase tracking-[0.35em] text-[#c4582f]">Station</p>
+                    <h1 class="mt-3 text-3xl font-semibold text-[#1e1c1a] md:text-4xl">{{ page.title }}</h1>
+                    {% if parent_line %}
+                        <p class="mt-3 text-sm text-[#4a433b]">
+                            Line:
+                            <a class="font-semibold text-[#2a7f72] hover:text-[#c4582f]" href="{{ parent_line.url }}">{{ parent_line.title }}</a>
+                        </p>
+                    {% endif %}
+                </div>
+                {% if station and station.latitude and station.longitude %}
+                    <a class="inline-flex items-center justify-center rounded-full border border-[#1e1c1a] px-5 py-2 text-sm font-semibold text-[#1e1c1a] hover:border-[#c4582f] hover:text-[#c4582f]" href="{% url 'map:transport_map' %}?lat={{ station.latitude }}&lng={{ station.longitude }}&title={{ station.station_label|urlencode }}&system={{ station.system_label|urlencode }}&line={{ station.line_label|urlencode }}">
+                        View on map
+                    </a>
                 {% endif %}
-            </ul>
-        {% endif %}
-        {% if page.intro %}
-            <div class="intro">{{ page.intro|richtext }}</div>
-        {% endif %}
-        {% if page.body %}
-            <div class="body">{{ page.body|richtext }}</div>
-        {% endif %}
+            </div>
+
+            {% if station %}
+                <div class="mt-10 grid gap-6 md:grid-cols-2">
+                    <div class="rounded-2xl border border-[#e8dbc9] bg-white p-6 shadow-sm">
+                        <h2 class="text-sm font-semibold uppercase tracking-wider text-[#c4582f]">Station details</h2>
+                        <dl class="mt-4 grid gap-3 text-sm text-[#3f3a33]">
+                            {% if station.system_label %}
+                                <div class="flex justify-between gap-4">
+                                    <dt class="font-semibold text-[#1e1c1a]">System</dt>
+                                    <dd>{{ station.system_label }}</dd>
+                                </div>
+                            {% endif %}
+                            {% if station.line_label %}
+                                <div class="flex justify-between gap-4">
+                                    <dt class="font-semibold text-[#1e1c1a]">Line</dt>
+                                    <dd>{{ station.line_label }}</dd>
+                                </div>
+                            {% endif %}
+                            {% if station.station_codes %}
+                                <div class="flex justify-between gap-4">
+                                    <dt class="font-semibold text-[#1e1c1a]">Station code</dt>
+                                    <dd>{{ station.station_codes }}</dd>
+                                </div>
+                            {% endif %}
+                            {% if station.opening %}
+                                <div class="flex justify-between gap-4">
+                                    <dt class="font-semibold text-[#1e1c1a]">Opened</dt>
+                                    <dd>{{ station.opening }}</dd>
+                                </div>
+                            {% endif %}
+                        </dl>
+                    </div>
+                    <div class="rounded-2xl border border-[#e8dbc9] bg-white p-6 shadow-sm">
+                        <h2 class="text-sm font-semibold uppercase tracking-wider text-[#c4582f]">Coordinates</h2>
+                        <div class="mt-4 space-y-3 text-sm text-[#3f3a33]">
+                            {% if station.latitude and station.longitude %}
+                                <div class="flex items-center justify-between gap-4">
+                                    <span class="font-semibold text-[#1e1c1a]">Latitude</span>
+                                    <span>{{ station.latitude }}</span>
+                                </div>
+                                <div class="flex items-center justify-between gap-4">
+                                    <span class="font-semibold text-[#1e1c1a]">Longitude</span>
+                                    <span>{{ station.longitude }}</span>
+                                </div>
+                            {% else %}
+                                <p>No coordinates provided.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% if station.latitude and station.longitude %}
+                    <div class="mt-8 overflow-hidden rounded-2xl border border-[#e8dbc9] bg-white shadow-sm">
+                        {% include "map/map.html" with map_points=station_map_points map_id="transport-map" map_data_id="transport-map-data" empty_message="No coordinates provided." %}
+                    </div>
+                {% endif %}
+            {% endif %}
+
+            {% if page.intro %}
+                <div class="mt-10 rounded-2xl border border-[#e8dbc9] bg-white p-6 text-sm leading-relaxed text-[#3f3a33]">
+                    {{ page.intro|richtext }}
+                </div>
+            {% endif %}
+            {% if page.body %}
+                <div class="mt-6 rounded-2xl border border-[#e8dbc9] bg-white p-6 text-sm leading-relaxed text-[#3f3a33]">
+                    {{ page.body|richtext }}
+                </div>
+            {% endif %}
+        </div>
     </section>
 {% endblock content %}
+
+{% block extra_js %}
+<script src="{% static 'map/vendor/leaflet/leaflet.js' %}"></script>
+<script src="{% static 'map/js/transport_map.js' %}"></script>
+{% endblock extra_js %}

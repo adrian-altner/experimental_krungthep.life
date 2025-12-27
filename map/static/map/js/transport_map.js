@@ -23,7 +23,10 @@
         return;
     }
 
-    const map = window.L.map(mapEl, { scrollWheelZoom: false });
+    const map = window.L.map(mapEl, { scrollWheelZoom: "center", zoomControl: true });
+    map.options.wheelPxPerZoomLevel = 120;
+    window.L.control.scale({ position: "bottomleft" }).addTo(map);
+
     window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
