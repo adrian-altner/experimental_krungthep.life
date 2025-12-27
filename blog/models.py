@@ -1,18 +1,23 @@
+import math
+import re
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.http import Http404
+from django.template.response import TemplateResponse
+from django.utils.html import strip_tags
+from django.utils.text import slugify
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalKey, ParentalManyToManyField
 from taggit.models import Tag, TaggedItemBase
 from wagtail import blocks
-from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
-from django.template.response import TemplateResponse
-from django.http import Http404
 from core.image_utils import assign_page_images
 
 
@@ -142,8 +147,16 @@ class BlogPost(Page):
         null=True,
         help_text="Estimated reading time in minutes.",
     )
+    auto_reading_time = models.BooleanField(
+        default=True,
+        help_text="Calculate reading time automatically.",
+    )
     featured = models.BooleanField(default=False)
     publish_date = models.DateField(blank=True, null=True)
+    show_toc = models.BooleanField(
+        default=True,
+        help_text="Show table of contents on the post page.",
+    )
     featured_image = models.ForeignKey(
         settings.WAGTAILIMAGES_IMAGE_MODEL,
         null=True,
@@ -181,15 +194,33 @@ class BlogPost(Page):
             ],
             heading="Post",
         ),
+        FieldPanel("show_toc"),
         FieldPanel("body"),
         MultiFieldPanel(
             [
-                FieldPanel("authors"),
-                FieldPanel("categories"),
-                FieldPanel("tags"),
-                FieldPanel("summary"),
-                FieldPanel("reading_time"),
-                FieldPanel("featured"),
+                FieldRowPanel(
+                    [
+                        FieldPanel("authors", classname="col6"),
+                        FieldPanel("categories", classname="col6"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("tags", classname="col6"),
+                        FieldPanel("summary", classname="col6"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("reading_time", classname="col6", read_only=True),
+                        FieldPanel("featured", classname="col6"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel("auto_reading_time", classname="col6"),
+                    ]
+                ),
             ],
             heading="Taxonomy",
         ),
@@ -203,5 +234,108 @@ class BlogPost(Page):
     template = "blog/blog_post.html"
 
     def save(self, *args, **kwargs):
+        if self.auto_reading_time:
+            word_count = self._count_words()
+            self.reading_time = (
+                max(1, math.ceil(word_count / 200)) if word_count else None
+            )
         super().save(*args, **kwargs)
         assign_page_images(self)
+
+    def _count_words(self):
+        word_count = 0
+
+        def count_text(text):
+            return len(re.findall(r"\b\w+\b", strip_tags(text or "")))
+
+        word_count += count_text(self.summary)
+        word_count += count_text(self.intro)
+
+        for block in self.body:
+            if block.block_type not in {"heading", "paragraph"}:
+                continue
+            value = block.value
+            if hasattr(value, "source"):
+                html = value.source
+            else:
+                html = str(value)
+            word_count += count_text(html)
+
+        return word_count
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        toc_items, toc_map, rendered_map = build_stream_toc(self.body)
+        context["blog_toc_items"] = toc_items
+        context["blog_toc_map"] = toc_map
+        context["blog_toc_rendered"] = rendered_map
+        context["show_toc"] = bool(self.show_toc)
+        return context
+
+
+HEADING_RE = re.compile(r"<h([23])([^>]*)>(.*?)</h\1>", re.IGNORECASE | re.DOTALL)
+HEADING_ID_RE = re.compile(r'\s+id="[^"]*"')
+
+
+def build_stream_toc(stream_value):
+    items = []
+    map_items = {}
+    rendered_map = {}
+    used = {}
+
+    for block in stream_value:
+        if block.block_type not in {"heading", "paragraph"}:
+            continue
+        value = block.value
+        html = getattr(value, "source", None) or str(value)
+        block_items = []
+
+        def add_heading(level, attrs, inner_html):
+            inner_html = re.sub(
+                r"</?h[23][^>]*>", "", inner_html, flags=re.IGNORECASE
+            )
+            text = strip_tags(inner_html).strip()
+            if not text:
+                return None
+            base = slugify(text) or f"section-{len(items) + 1}"
+            count = used.get(base, 0) + 1
+            used[base] = count
+            anchor = base if count == 1 else f"{base}-{count}"
+            attrs = HEADING_ID_RE.sub("", (attrs or "")).strip()
+            if attrs:
+                attrs = f" {attrs}"
+            rendered_html = (
+                f"<h{level}{attrs} id=\"{anchor}\">{inner_html}</h{level}>"
+            )
+            item = {
+                "id": block.id,
+                "level": level,
+                "anchor": anchor,
+                "text": text,
+                "html": inner_html,
+                "rendered_html": rendered_html,
+            }
+            items.append(item)
+            block_items.append(item)
+            return rendered_html
+
+        def replace(match):
+            level = int(match.group(1))
+            attrs = match.group(2) or ""
+            inner_html = match.group(3)
+            rendered_html = add_heading(level, attrs, inner_html)
+            return rendered_html or match.group(0)
+
+        new_html = HEADING_RE.sub(replace, html)
+
+        if block.block_type == "heading" and not block_items:
+            rendered_html = add_heading(2, "", html)
+            if rendered_html:
+                new_html = rendered_html
+
+        if block_items:
+            rendered_map[block.id] = new_html
+            if block.block_type == "heading":
+                map_items[block.id] = block_items[0]
+
+    return items, map_items, rendered_map

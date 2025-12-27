@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags %}
+{% load wagtailcore_tags wagtailimages_tags wagtailroutablepage_tags blog_tags %}
 
 {% block body_class %}
 template-blogpage
@@ -16,6 +16,9 @@ template-blogpage
                     <h1 class="text-3xl font-semibold text-[#1e1c1a] md:text-4xl">{{ page.title }}</h1>
                     <div class="flex flex-wrap items-center gap-3 text-xs text-[#5b534b]">
                         <span class="rounded-full border border-[#e8dbc9] bg-white px-3 py-1">{{ page.date }}</span>
+                        {% if page.auto_reading_time and page.reading_time %}
+                            <span class="rounded-full border border-[#e8dbc9] bg-white px-3 py-1">{{ page.reading_time }} min read</span>
+                        {% endif %}
                         {% if page.authors.exists %}
                             <span class="text-[#c4582f]">•</span>
                             <div class="flex flex-wrap items-center gap-3">
@@ -74,13 +77,55 @@ template-blogpage
         </header>
 
         <div class="mx-auto max-w-3xl px-6 py-12">
+            {% if show_toc and blog_toc_items %}
+                <aside class="mb-10 rounded-2xl border border-[#e8dbc9] bg-white p-6">
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-[#c4582f]">Contents</h2>
+                    <ul class="mt-4 space-y-2 text-sm text-[#3f3a33]">
+                        {% for item in blog_toc_items %}
+                            <li class="{% if item.level == 3 %}pl-4 text-xs{% endif %}">
+                                <a class="hover:text-[#c4582f]" href="#{{ item.anchor }}">{{ item.text }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </aside>
+            {% endif %}
             <div class="space-y-6 text-[#3f3a33]">
                 {% for block in page.body %}
-                    <div>
-                        <div class="prose max-w-none prose-neutral prose-headings:text-[#1e1c1a] prose-a:text-[#2a7f72] prose-a:no-underline prose-a:hover:text-[#c4582f]">
-                            {% include_block block %}
+                    {% if block.block_type == "heading" %}
+                        {% with rendered_html=blog_toc_rendered|get_item:block.id %}
+                            {% if rendered_html %}
+                                <div class="rounded-2xl border border-[#e8dbc9] bg-white p-6 shadow-sm">
+                                    <div class="prose max-w-none prose-neutral prose-headings:text-[#1e1c1a] prose-a:text-[#2a7f72] prose-a:no-underline prose-a:hover:text-[#c4582f]">
+                                        {{ rendered_html|safe }}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="rounded-2xl border border-[#e8dbc9] bg-white p-6 shadow-sm">
+                                    <div class="prose max-w-none prose-neutral prose-headings:text-[#1e1c1a] prose-a:text-[#2a7f72] prose-a:no-underline prose-a:hover:text-[#c4582f]">
+                                        {% include_block block %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endwith %}
+                    {% elif block.block_type == "paragraph" %}
+                        {% with rendered_html=blog_toc_rendered|get_item:block.id %}
+                            <div class="rounded-2xl border border-[#e8dbc9] bg-white p-6 shadow-sm">
+                                <div class="prose max-w-none prose-neutral prose-headings:text-[#1e1c1a] prose-a:text-[#2a7f72] prose-a:no-underline prose-a:hover:text-[#c4582f]">
+                                    {% if rendered_html %}
+                                        {{ rendered_html|richtext }}
+                                    {% else %}
+                                        {% include_block block %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endwith %}
+                    {% else %}
+                        <div class="rounded-2xl border border-[#e8dbc9] bg-white p-6 shadow-sm">
+                            <div class="prose max-w-none prose-neutral prose-headings:text-[#1e1c1a] prose-a:text-[#2a7f72] prose-a:no-underline prose-a:hover:text-[#c4582f]">
+                                {% include_block block %}
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                 {% endfor %}
             </div>
 
