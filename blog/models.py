@@ -3,15 +3,17 @@ import re
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django import forms
 from django.db import models
 from django.http import Http404
 from django.template.response import TemplateResponse
 from django.utils.html import strip_tags
 from django.utils.text import slugify
 from modelcluster.contrib.taggit import ClusterTaggableManager
-from modelcluster.fields import ParentalKey, ParentalManyToManyField
+from modelcluster.fields import ParentalKey
 from taggit.models import Tag, TaggedItemBase
 from wagtail import blocks
+from wagtail.admin.forms import WagtailAdminPageForm
 from wagtail.admin.panels import FieldPanel, FieldRowPanel, MultiFieldPanel
 from wagtail.contrib.routable_page.models import RoutablePageMixin, route
 from wagtail.fields import RichTextField, StreamField
@@ -47,11 +49,7 @@ class BlogPostTag(TaggedItemBase):
 
 
 class BlogPage(RoutablePageMixin, Page):
-    intro = RichTextField(blank=True)
-
-    content_panels = Page.content_panels + [
-        FieldPanel("intro"),
-    ]
+    content_panels = Page.content_panels
     parent_page_types = ["home.HomePage"]
     subpage_types = ["blog.BlogPost"]
     template = "blog/blog_page.html"
@@ -62,21 +60,25 @@ class BlogPage(RoutablePageMixin, Page):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         all_posts = self.get_base_posts()
-        posts = all_posts.order_by("-date")
+        posts = all_posts.order_by("-published_date")
         tag_slug = request.GET.get("tag")
         category_slug = request.GET.get("category")
         author_slug = request.GET.get("author")
         if tag_slug:
             posts = posts.filter(tags__slug=tag_slug)
         if category_slug:
-            posts = posts.filter(categories__slug=category_slug)
+            posts = posts.filter(category__slug=category_slug)
         if author_slug:
-            posts = posts.filter(authors__author_slug=author_slug)
+            posts = posts.filter(author__author_slug=author_slug)
         context["posts"] = posts
         context["active_tag"] = tag_slug
         context["active_category"] = category_slug
         context["active_author"] = author_slug
-        context["categories"] = BlogCategory.objects.all()
+        context["categories"] = (
+            BlogCategory.objects.filter(blog_posts__in=all_posts)
+            .distinct()
+            .order_by("title")
+        )
         User = get_user_model()
         context["authors"] = (
             User.objects.filter(blog_posts__in=all_posts)
@@ -127,7 +129,7 @@ class BlogPage(RoutablePageMixin, Page):
         )
         if not author:
             raise Http404
-        posts = self.get_base_posts().filter(authors=author).order_by("-date")
+        posts = self.get_base_posts().filter(author=author).order_by("-published_date")
         context = self.get_context(request)
         context["author"] = author
         context["posts"] = posts
@@ -138,10 +140,41 @@ class BlogPage(RoutablePageMixin, Page):
         )
 
 
+class BlogPostForm(WagtailAdminPageForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if (
+            not self.is_bound
+            and self.for_user
+            and "author" in self.fields
+            and not self.instance.author_id
+        ):
+            self.fields["author"].initial = self.for_user.pk
+        if (
+            not self.is_bound
+            and "category" in self.fields
+            and not self.instance.category_id
+        ):
+            try:
+                default_category = BlogCategory.objects.get(slug="general")
+            except BlogCategory.DoesNotExist:
+                default_category = None
+            if default_category:
+                self.fields["category"].initial = default_category.pk
+
+
 class BlogPost(Page):
-    date = models.DateField("Post date")
-    intro = models.CharField(max_length=250)
+    base_form_class = BlogPostForm
+    published_date = models.DateField("Published date")
+    updated_date = models.DateField("Updated date", blank=True, null=True)
     summary = models.TextField(blank=True)
+    featured_image = models.ForeignKey(
+        settings.WAGTAILIMAGES_IMAGE_MODEL,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
     reading_time = models.PositiveSmallIntegerField(
         blank=True,
         null=True,
@@ -151,25 +184,21 @@ class BlogPost(Page):
         default=True,
         help_text="Calculate reading time automatically.",
     )
-    featured = models.BooleanField(default=False)
-    publish_date = models.DateField(blank=True, null=True)
+    featured = models.BooleanField(
+        default=False,
+        help_text="Featured Post on Blog Page."
+    )
     show_toc = models.BooleanField(
         default=True,
         help_text="Show table of contents on the post page.",
     )
-    featured_image = models.ForeignKey(
-        settings.WAGTAILIMAGES_IMAGE_MODEL,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-    )
+    
     body = StreamField(
         [
             (
                 "heading",
                 blocks.RichTextBlock(
-                    features=["h2", "h3", "bold", "italic"],
+                    features=["h2", "h3", "h4", "h5","bold", "italic"],
                 ),
             ),
             ("paragraph", blocks.RichTextBlock()),
@@ -178,57 +207,88 @@ class BlogPost(Page):
         blank=True,
         use_json_field=True,
     )
-    categories = ParentalManyToManyField(BlogCategory, blank=True)
-    authors = ParentalManyToManyField(
-        settings.AUTH_USER_MODEL, blank=True, related_name="blog_posts"
+    category = models.ForeignKey(
+        BlogCategory,
+        blank=False,
+        null=False,
+        on_delete=models.PROTECT,
+        related_name="blog_posts",
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False,
+        null=False,
+        on_delete=models.PROTECT,
+        related_name="blog_posts",
     )
     tags = ClusterTaggableManager(through=BlogPostTag, blank=True)
 
     content_panels = Page.content_panels + [
-        MultiFieldPanel(
+        "summary",
+        
+        FieldRowPanel(
             [
-                FieldPanel("date"),
-                FieldPanel("publish_date"),
-                FieldPanel("featured_image"),
-                FieldPanel("intro"),
+                FieldPanel("published_date", classname="col6"),
+                FieldPanel("updated_date",  classname="col6"),
+                
             ],
-            heading="Post",
+            heading="Date",
         ),
-        FieldPanel("show_toc"),
-        FieldPanel("body"),
+        "featured_image",
+
+        "body",
+        
         MultiFieldPanel(
             [
                 FieldRowPanel(
                     [
-                        FieldPanel("authors", classname="col6"),
-                        FieldPanel("categories", classname="col6"),
+                        FieldPanel("featured", classname="col6"),
+                        FieldPanel("show_toc", classname="col6"),
+                    ]
+                ),
+                FieldRowPanel(
+                    [
+                        FieldPanel(
+                            "reading_time",
+                            classname="col6 reading-time-field",
+                            # Styling lives in blog/static/css/blog-admin.css (see .reading-time-field + .w-field__textoutput).
+                            read_only=True,
+                        ),
+                        FieldPanel("auto_reading_time", classname="col6"),
+                    ]
+                ),
+            ],
+            heading="Extras",
+        ),
+        
+
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel(
+                            "author",
+                            classname="col3",
+                            widget=forms.RadioSelect,
+                        ),
+                        FieldPanel(
+                            "category",
+                            classname="col6",
+                            # Admin grid layout is tied to this class in blog/static/css/blog-admin.css.
+                            widget=forms.RadioSelect(attrs={"class": "radio-grid"}),
+                        ),
                     ]
                 ),
                 FieldRowPanel(
                     [
                         FieldPanel("tags", classname="col6"),
-                        FieldPanel("summary", classname="col6"),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
-                        FieldPanel("reading_time", classname="col6", read_only=True),
-                        FieldPanel("featured", classname="col6"),
-                    ]
-                ),
-                FieldRowPanel(
-                    [
-                        FieldPanel("auto_reading_time", classname="col6"),
                     ]
                 ),
             ],
             heading="Taxonomy",
         ),
     ]
-    promote_panels = Page.promote_panels + [
-        FieldPanel("seo_title"),
-        FieldPanel("search_description"),
-    ]
+    promote_panels = Page.promote_panels
     parent_page_types = ["blog.BlogPage"]
     subpage_types = []
     template = "blog/blog_post.html"
@@ -249,8 +309,6 @@ class BlogPost(Page):
             return len(re.findall(r"\b\w+\b", strip_tags(text or "")))
 
         word_count += count_text(self.summary)
-        word_count += count_text(self.intro)
-
         for block in self.body:
             if block.block_type not in {"heading", "paragraph"}:
                 continue

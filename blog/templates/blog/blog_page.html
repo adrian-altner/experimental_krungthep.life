@@ -12,9 +12,6 @@ template-blogindexpage
             <header class="flex flex-col gap-6 border-b border-[#e8dbc9] pb-8 md:flex-row md:items-end md:justify-between">
                 <div class="max-w-2xl space-y-4">
                     <h1 class="text-3xl font-semibold text-[#1e1c1a] md:text-4xl">{{ page.title }}</h1>
-                    {% if page.intro %}
-                        <div class="text-sm leading-relaxed text-[#4a433b]">{{ page.intro|richtext }}</div>
-                    {% endif %}
                 </div>
                 <div class="flex flex-wrap gap-3 text-sm">
                     <a class="rounded-full border border-[#1e1c1a] px-4 py-2 font-semibold text-[#1e1c1a] hover:border-[#c4582f] hover:text-[#c4582f]" href="{% routablepageurl page 'author_index' %}">Authors</a>

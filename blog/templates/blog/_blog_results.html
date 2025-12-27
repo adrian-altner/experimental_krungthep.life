@@ -62,32 +62,29 @@
                 {% endif %}
                 <div class="space-y-4 p-6">
                     <div class="flex flex-wrap items-center gap-2 text-xs text-[#5b534b]">
-                        <span class="rounded-full border border-[#e8dbc9] bg-[#fdf8f1] px-3 py-1">{{ post.date }}</span>
-                        {% if post.authors.exists %}
+                        <span class="rounded-full border border-[#e8dbc9] bg-[#fdf8f1] px-3 py-1">{{ post.published_date }}</span>
+                        {% if post.author %}
                             <span class="text-[#c4582f]">•</span>
                             <div class="flex flex-wrap items-center gap-3">
-                                {% for author in post.authors.all %}
-                                    <div class="flex items-center gap-2">
-                                        {% if author.wagtail_userprofile.avatar %}
-                                            <img class="h-7 w-7 rounded-full border border-[#e8dbc9] object-cover" src="{{ author.wagtail_userprofile.avatar.url }}" alt="{{ author.get_full_name|default:author.username }}" width="28" height="28">
-                                        {% endif %}
-                                        <a class="text-sm font-semibold text-[#2a7f72] hover:text-[#c4582f]" href="{% routablepageurl page 'author_detail' author.author_slug %}">
-                                            {{ author.get_full_name|default:author.username }}
-                                        </a>{% if not forloop.last %},{% endif %}
-                                    </div>
-                                {% endfor %}
+                                <div class="flex items-center gap-2">
+                                    {% if post.author.wagtail_userprofile.avatar %}
+                                        <img class="h-7 w-7 rounded-full border border-[#e8dbc9] object-cover" src="{{ post.author.wagtail_userprofile.avatar.url }}" alt="{{ post.author.get_full_name|default:post.author.username }}" width="28" height="28">
+                                    {% endif %}
+                                    <a class="text-sm font-semibold text-[#2a7f72] hover:text-[#c4582f]" href="{% routablepageurl page 'author_detail' post.author.author_slug %}">
+                                        {{ post.author.get_full_name|default:post.author.username }}
+                                    </a>
+                                </div>
                             </div>
                         {% endif %}
                     </div>
                     <h2 class="text-lg font-semibold text-[#1e1c1a]">
                         <a class="hover:text-[#c4582f]" href="{% pageurl post %}">{{ post.title }}</a>
                     </h2>
-                    <p class="text-sm leading-relaxed text-[#4a433b]">{{ post.intro }}</p>
-                    {% if post.categories.exists or post.tags.exists %}
+                    {% if post.category or post.tags.exists %}
                         <div class="flex flex-wrap gap-2">
-                            {% for category in post.categories.all %}
-                                <span class="rounded-full border border-[#e8dbc9] bg-white px-3 py-1 text-xs font-semibold text-[#1e1c1a]">{{ category.title }}</span>
-                            {% endfor %}
+                            {% if post.category %}
+                                <span class="rounded-full border border-[#e8dbc9] bg-white px-3 py-1 text-xs font-semibold text-[#1e1c1a]">{{ post.category.title }}</span>
+                            {% endif %}
                             {% for tag in post.tags.all %}
                                 <span class="rounded-full border border-[#c4582f] bg-[#fff7f0] px-3 py-1 text-xs font-semibold text-[#c4582f]">#{{ tag }}</span>
                             {% endfor %}

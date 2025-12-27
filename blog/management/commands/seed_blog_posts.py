@@ -9,7 +9,7 @@ from django.utils.text import slugify
 from faker import Faker
 from wagtail.blocks import StreamValue
 
-from blog.models import BlogPage, BlogPost
+from blog.models import BlogCategory, BlogPage, BlogPost
 
 
 class Command(BaseCommand):
@@ -38,6 +38,7 @@ class Command(BaseCommand):
             faker.seed_instance(options["seed"])
 
         users = list(get_user_model().objects.all())
+        categories = list(BlogCategory.objects.all())
         now = timezone.now().date()
 
         for index in range(count):
@@ -45,9 +46,8 @@ class Command(BaseCommand):
             base_slug = slugify(title) or f"post-{index + 1}"
             slug = self._unique_slug(blog_root, base_slug)
 
-            intro = faker.text(max_nb_chars=180)
             summary = faker.paragraph(nb_sentences=3)
-            publish_date = now - timedelta(days=index)
+            published_date = now - timedelta(days=index)
 
             stream_block = BlogPost._meta.get_field("body").stream_block
             body = StreamValue(
@@ -62,19 +62,19 @@ class Command(BaseCommand):
             post = BlogPost(
                 title=title,
                 slug=slug,
-                date=publish_date,
-                intro=intro,
+                published_date=published_date,
                 summary=summary,
-                publish_date=publish_date,
+                updated_date=published_date,
                 body=body,
             )
+            if users:
+                post.author = faker.random_element(users)
+            if categories:
+                post.category = faker.random_element(categories)
 
             blog_root.add_child(instance=post)
             revision = post.save_revision()
             revision.publish()
-
-            if users:
-                post.authors.set(faker.random_elements(users, length=min(2, len(users)), unique=True))
 
             self.stdout.write(f"Created: {post.title}")
 

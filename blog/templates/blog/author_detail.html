@@ -43,15 +43,14 @@ template-blogauthordetailpage
                     {% endif %}
                     <div class="card-body">
                         <p class="meta">
-                            <span>{{ post.date }}</span>
+                            <span>{{ post.published_date }}</span>
                         </p>
                         <h2><a href="{% pageurl post %}">{{ post.title }}</a></h2>
-                        <p class="excerpt">{{ post.intro }}</p>
-                        {% if post.categories.exists or post.tags.exists %}
+                        {% if post.category or post.tags.exists %}
                             <div class="card-taxonomy">
-                                {% for category in post.categories.all %}
-                                    <span class="taxon">{{ category.title }}</span>
-                                {% endfor %}
+                                {% if post.category %}
+                                    <span class="taxon">{{ post.category.title }}</span>
+                                {% endif %}
                                 {% for tag in post.tags.all %}
                                     <span class="taxon taxon--tag">#{{ tag }}</span>
                                 {% endfor %}

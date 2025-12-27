@@ -1,0 +1,32 @@
+.radio-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 18px;
+    border: 1px solid blueviolet;
+    padding: 1rem;
+}
+
+.radio-grid > div {
+    margin: 0;
+}
+
+.reading-time-field .w-field__input,
+.reading-time-field input {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+    outline: 0;
+    pointer-events: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.reading-time-field .w-field__textoutput {
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
+}
+
+/* Hint: Wagtail renders read-only values as .w-field__textoutput. */

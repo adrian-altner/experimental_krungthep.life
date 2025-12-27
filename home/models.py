@@ -60,10 +60,7 @@ class AboutPage(Page):
         FieldPanel("featured"),
         FieldPanel("publish_date"),
     ]
-    promote_panels = Page.promote_panels + [
-        FieldPanel("seo_title"),
-        FieldPanel("search_description"),
-    ]
+    promote_panels = Page.promote_panels
     parent_page_types = ["home.HomePage"]
     subpage_types = []
 
@@ -118,10 +115,7 @@ class BlankPage(Page):
         FieldPanel("featured"),
         FieldPanel("publish_date"),
     ]
-    promote_panels = Page.promote_panels + [
-        FieldPanel("seo_title"),
-        FieldPanel("search_description"),
-    ]
+    promote_panels = Page.promote_panels
     parent_page_types = ["home.HomePage"]
     subpage_types = []
     template = "home/blank_page.html"
