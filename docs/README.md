@@ -17,6 +17,13 @@ Notes:
 - Existing static assets in `core/static/` remain unchanged.
 - htmx is bundled via Vite; use `hx-*` attributes directly in templates.
 
+## Seed Data
+
+### Blog posts (Faker)
+- Install deps: `./.venv/bin/python -m pip install -r requirements.txt`
+- Generate posts: `python manage.py seed_blog_posts --count 10`
+- Optional: `--seed 123` (reproducible), `--locale de_DE`
+
 ## Linting
 
 - djLint config lives in `.djlintrc.json`.

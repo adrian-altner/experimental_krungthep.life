@@ -1,6 +1,17 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* Vite-managed styles for new UI work. */
 :root {
     --vite-accent: #2a7f72;
 }
+
+/* @layer components {
+    .prose h2 {
+        @apply text-2xl font-semibold text-[#1e1c1a];
+    }
+
+    .prose h3 {
+        @apply text-xl font-semibold text-[#1e1c1a];
+    }
+} */

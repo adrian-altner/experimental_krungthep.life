@@ -11,6 +11,7 @@ from wagtail.fields import RichTextField, StreamField
 from wagtail.images.blocks import ImageChooserBlock
 from wagtail.models import Page
 from wagtail.snippets.models import register_snippet
+from django.template.response import TemplateResponse
 from django.http import Http404
 from core.image_utils import assign_page_images
 
@@ -93,6 +94,12 @@ class BlogPage(RoutablePageMixin, Page):
             .distinct()
         )
 
+    def serve(self, request, *args, **kwargs):
+        if request.headers.get("HX-Request") == "true":
+            context = self.get_context(request, *args, **kwargs)
+            return TemplateResponse(request, "blog/_blog_results.html", context)
+        return super().serve(request, *args, **kwargs)
+
     @route(r"^authors/$")
     def author_index(self, request):
         context = self.get_context(request)
@@ -146,7 +153,12 @@ class BlogPost(Page):
     )
     body = StreamField(
         [
-            ("heading", blocks.CharBlock(form_classname="title")),
+            (
+                "heading",
+                blocks.RichTextBlock(
+                    features=["h2", "h3", "bold", "italic"],
+                ),
+            ),
             ("paragraph", blocks.RichTextBlock()),
             ("image", ImageChooserBlock()),
         ],
